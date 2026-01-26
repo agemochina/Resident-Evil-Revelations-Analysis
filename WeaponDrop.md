@@ -92,9 +92,10 @@ Weapon Level 判定武器等级（Lv48, Lv49, Lv50, Lv51=SP=蓝底)
     int weapon_level = choose_level(score, rate_finders)
 ```
 
-解释：意思是先打分 -- 即随机产生一个 [0.0, 100.0) 之间的小数，然后查表获得获得level。Level表在ROM文件archive\game\coop_table\weaponRarityRate.lvt
+解释：意思是先打分 -- 即随机产生一个 [0.0, 100.0) 之间的小数，然后计算武器等级。
+原始数据表在ROM文件archive\game\coop_table\weaponRarityRate.lvt
 
-| Level | Rate   |
+| Weapon Level | Rate   |
 |-------|--------|
 | +0    | 0.8221 |
 | +1    | 0.1084 |
@@ -105,7 +106,7 @@ weapon_level指相对于基数的额外增加等级 [+0 ~ +3]，混沌鬼船(GSC
 
 RareFinders 分为三种： + ++ +++ ，可叠加，不区分顺序，每种分别增加1、2、3点数。例如三把武器装满寻宝，那么寻宝值=(1+2+3)*3=18点。
 
-每1点寻宝值可以增加Lv51掉率接近1%（实际≈0.82%）
+每1点寻宝值可以增加Lv51掉率约1%（准确值为0.83%）
 
 所以每个箱子开出Lv51=SP蓝底几率为：
 - 9RF，SP率 = 1.49%(基数) + 18*0.83 ≈ 16.4%
