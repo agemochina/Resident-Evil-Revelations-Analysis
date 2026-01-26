@@ -1,12 +1,12 @@
 # ResidentEvil:Revelations 生化危机启示录 GSC(混沌鬼船) 武器掉落分析
 
-为了简化起见，下面只写 GSC（混沌鬼船/Ghost Ship Chaos)的武器掉落。
+为了简化起见，本文只分析 GSC（混沌鬼船/Ghost Ship Chaos)的武器掉落。
 
 分析的依据
-- IDA 游戏代码的汇编GDB调试
+- IDA 工具对游戏代码反汇编GDB调试
 - ROM 文件数据解析
 
-PS：从反汇编代码看到叫这个： gacha ガチャ （看上去Capcom对抽卡开奖的定位很清楚）
+PS：从反汇编代码看到几处命名叫这个： gacha（ガチャ/抽卡），看上去Capcom把这事定位的很清楚
 
 
 # 结论
