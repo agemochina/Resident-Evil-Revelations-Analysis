@@ -1,18 +1,18 @@
 # 工具描述
-LVT 是REV等常见的表格二进制格式，本工具可以把.lvt解析为可以阅读的表格。
+LVT格式是ResidentEvil:Revelations常见的数据格式，它是一个表格的二进制存储文件，本工具可以把.lvt解析为可以阅读的表格。
 
-# 先获取原始文件
-1. 文件系统可以通过各种模拟器右键导出
-2. 突袭模式数据表在压缩包中：romfs\nativeNXx64\archive\game\coop_table\coop_table.arc
+# 先获取原始lvt文件
+1. ROM文件系统可以通过各种模拟器导出
+2. 突袭模式数据在压缩包中：romfs\nativeNXx64\archive\game\coop_table\coop_table.arc
 3. arc 格式可以用 kuriimu 工具 (https://github.com/IcySon55/Kuriimu) 解压缩 
 
-# 解压缩后即可使用本工具
+# 解压缩后即可使用本工具把lvt解码
 
-命令行示例
+命令行示例（你需要提前安装 python3）
 ```bash
-lvt_parser.py weaponRate.0A3E643B
+python3 lvt_parser.py weaponRate.0A3E643B
 ```
-命令行会输入下述内容，同时会在同目录生成.csv 文件（建议使用WPS查看，否则日文显示乱码）
+命令行会输出下述内容，同时会在源lvt文件目录生成.csv 文件（建议使用WPS查看，否则日文显示乱码）
 ```
 num_records=19 bytes_per_record=15
 field_titles=['', '', '']
