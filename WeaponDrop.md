@@ -127,11 +127,11 @@ SLOT即孔数。
 伪代码：
 ```C++
     float score = rand_float_n(100.0)
-    int weapon_level = choose_slots(score, weapon_id, weapnon_level, rate_finders)
+    int weapon_level = choose_slots(score, weapon_id, weapon_level, rate_finders)
 ```
 
-解释：意思是先打分 -- 即随机产生一个 [0.0, 100.0) 之间的小数，然后根据武器ID、是否蓝底、寻宝插件获得槽数。
-蓝底+1孔，实际孔数 = 1 + 武器基础孔数 + 孔随机调整(-2 ~ +2)
+解释：意思是先打分 -- 即随机产生一个 [0.0, 100.0) 之间的小数，然后根据武器ID、是否蓝底、寻宝插件计算槽数。
+蓝底必+1孔，实际孔数 = 1 + 武器基础孔数 + 孔随机调整(-2 ~ +2)
 
 基础槽数表在ROM文件archive\game\coop_table\weaponSlotRate.lvt 的最后一行
 | -2 | -1 | +0 | +1 | +2 |
@@ -197,8 +197,8 @@ TODO：补充7寻宝、0寻宝数据。
 - 50.0 0x80090000 短射程
 - 90.0 0x80090007 轻盈
 - 98.4 0x8009000A 长射程+
-- 98.5 0x8009000B 异名
-- 99.0 0x8009000B 异名
-- 99.9 0x8009000B 异名
+- 98.5 0x8009000B 异名（Rare Tag）
+- 99.0 0x8009000B 异名（Rare Tag）
+- 99.9 0x8009000B 异名（Rare Tag）
 
-解释：无标签为 50%，异名RareTag（0x8009000B） 为1.5%，只有随机分超过98.5分才是异名
+解释：无标签为 50%，异名（Rare Tag）为1.5%，只有随机分超过98.5分才是异名
