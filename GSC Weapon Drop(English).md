@@ -21,15 +21,14 @@ TL;DR Version: Put the conclusion first.
     - On average, you get **one Lv51, Max-Slot, RateTag weapon per 1000 boxes**.
     - On average, you get **one Lv51, Max-Slot, RateTag Magnum per 10000 boxes**. (for all Magnums Python + L.Hawk + PaleRider = sum rate is 9.5%)
     
-Probability Table (open 1 weapon case) (follow probabilities are for large-scale data, not individual lucky event)
-| Equip RareFinders | Lv51 (Blue) | Rare Tag (Special Name) | MaxSlot | Blue & Rare & MaxSlot sametime |
-| :------------- | :-----------: | :--------: | :------------: | :------------------: |
-| 333 222 111    | 16.43%        | 1.5%       | 50%            | 0.12%                |
-| 333 222 11     | 15.53%        | 1.5%       | 48%            | 0.11%                |
-| 333 222 1      | 14.63%        | 1.5%       | 46%            | 0.10%                |
-| 333            | 8.50%         | 1.5%       | 32%            | 0.04%                |
-| None           | 1.49%         | 1.5%       | 14%            | 0.003%               |
-
+Probability Table (open 1 weapon case) (follow probabilities are for large-scale data, not individual lucky event):
+|Equip RareFinders| LV51(Blue)   | MaxSlot        | Rare Tag   | Blue & Rare & MaxSlot sametime |
+| :------------- | :-----------: | :------------: | :--------: | :------------------: |
+| 333 222 111    | 16.43%        | 50%            | 1.5%       | 0.12%                |
+| 333 222 11     | 15.53%        | 48%            | 1.5%       | 0.11%                |
+| 333 222 1      | 14.63%        | 46%            | 1.5%       | 0.10%                |
+| 333            | 8.50%         | 32%            | 1.5%       | 0.04%                |
+| 不装备         | 1.49%         | 14%            | 1.5%       | 0.003%               |
 
 # Drop Determination Steps
 
