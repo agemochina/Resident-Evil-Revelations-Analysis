@@ -5,19 +5,19 @@ Analysis Basis
 - ROM file data parsing
 - Game Nintendo Switch Ver 1.0.1
 
-PS: From the disassembled code, several places are named "gacha" (ガチャ/gacha). It seems Capcom has a clear understanding of this.
+PS: From the disassembled code, several places are named "gacha" (ガチャ). It seems Capcom has a clear understanding of this.
 
 # Conclusion
 
 TL;DR version: Conclusions first. The detailed analysis report follows.
 
-- Weapon drop determination occurs at the results screen. Initialization and pickup do not trigger the check; only the results screen processes the "lottery" one by one.
-- Weapon drops are random and unrelated to any metaphysical factors (playtime, kills, damage taken, full clear vs. speedrun, A or B, 7-weapon vs. 9-weapon runs, character name, character color, existing inventory, previous drop history...). These values do not participate in drop calculation in the code.
+- Weapon drops determination occurs only at the results screen, "gacha" one by one. Game start initialization and pickup weapon cases do not trigger the determination;
+- Weapon drops are random and unrelated to any superstitions factors (playtime, kills, damage taken, full clear vs. speedrun, A or B, 7-weapon vs. 9-weapon runs, character name, character color, existing inventory, previous drop history...). These values do not participate in drop calculation of the game souce code.
 - **RareFinders** Effect: Has a massive increase on **Blue (BW=Lv51) rate** and **Full Slot rate**. RareFinders are stackable, and their order on weapon parts does not matter.
-- **RareFinders** Do NOT Affect: Weapon type determination and Rare (Special Name) Tag determination. These are purely random and do not depend on RareFinders.
-- The correct approach to get good drops is to equip as many RareFinders as possible, focus on loot more weapon cases. Other superstitions are useless. More cases opened = more chances for good items.
+- **RareFinders** Do NOT Affect: Weapon type or Rare Tag determination. These are purely random and do not depend on RareFinders.
+- The correct approach to get good weapon is to equip as many RareFinders as possible, focus on loot more weapon cases. Other superstitions are useless. More cases = more chances for good weapons.
 
-Probability Table (1 weapon case) (follow probabilities are for large-scale data, not individual lucky)
+Probability Table (open 1 weapon case) (follow probabilities are for large-scale data, not individual lucky event)
 | Equip RareFinders | Lv51 (Blue) | Rare (Special Name) | FullSlot | Blue+Rare+Fullslots sametime |
 | :------------- | :-----------: | :--------: | :------------: | :------------------: |
 | 333 222 111    | 16.43%        | 1.5%       | 50%            | 0.12%                |
@@ -27,16 +27,16 @@ Probability Table (1 weapon case) (follow probabilities are for large-scale data
 | None           | 1.49%         | 1.5%       | 14%            | 0.003%               |
 
 In other words:
-- Removing one or two of the smallest (+) RareFinders makes little difference, but try not to remove the (+++) or (++) high-level rarefinders. Equip as many as possible if you can.
+- Equip as many as possible if you can. Removing one or two of the smallest (+) RareFinders makes little difference, but try not to remove the (+++) or (++) high-level rarefinders. 
 - Equipping 7, 8, or 9 RareFinders  
     - On average: ~1.1 Blue per 7-weapon run, ~1.4 Blue per 9-weapon run.
     - On average: **1 Blue + Full Slot + Rare per 1000 weapon cases**.
-    - On average: **1 Blue + Full Slot + Rare Magnum** (Python / L. Hawk / Pale Rider) per **10,000 weapon cases** (all magnum appearance rate is 9.5%).
+    - On average: **1 Blue + Full Slot + Rare Magnum** (Python / L. Hawk / Pale Rider) per **10,000 weapon cases** (all magnum appearance rate sum is 9.5%).
 
 # Drop Determination Steps
 
-Weapon drop determination is a four-step process: WeaponID -> WeaponLevel -> Slots -> TAG
-- **WeaponID**: First determines which weapon type drops. Note: The Rare (Special Name) is a Tag, not a separate weapon type.
+Weapon drop determination is in four-step: WeaponID -> WeaponLevel -> Slots -> TAG
+- **WeaponID**: Determines weapon type(M92F/Python/...)
 - **WeaponLevel**: Determines the weapon level (Lv48, Lv49, Lv50, Lv51=BW=Blue).
 - **Slots**: Determines the number of slots
 - **TAG**: Determines the weapon tag (No tag; Various tags; Rare is also a TAG).
