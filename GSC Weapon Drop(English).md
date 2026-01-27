@@ -3,6 +3,7 @@
 Analysis Basis
 - Disassembly and GDB debugging of game code using IDA tools
 - ROM file data parsing
+- Game Nintendo Switch Ver 1.0.1
 
 PS: From the disassembled code, several places are named "gacha" (ガチャ/gacha). It seems Capcom has a clear understanding of this.
 
