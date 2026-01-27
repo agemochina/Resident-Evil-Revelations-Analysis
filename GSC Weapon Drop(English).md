@@ -9,14 +9,18 @@ PS: From the disassembled code, several places are named "gacha" (ガチャ). It
 
 # Conclusion
 
-TL;DR version: Conclusions first. The detailed analysis report follows.
+TL;DR Version: Put the conclusion first.
 
-- Weapon drops determination occurs only at the results screen, "gacha" one by one. Game start initialization and pickup weapon cases do not trigger the determination;
-- Weapon drops are random and unrelated to any superstitions factors (playtime, kills, damage taken, full clear vs. speedrun, A or B, 7-weapon vs. 9-weapon runs, character name, character color, existing inventory, previous drop history...). These values do not participate in drop calculation of the game souce code.
-- **RareFinders** Effect: Has a massive increase on **Blue (BW=Lv51) rate** and **Full Slot rate**. RareFinders are stackable, and their order on weapon parts does not matter.
-- **RareFinders** Do NOT Affect: Weapon type or Rare Tag determination. These are purely random and do not depend on RareFinders.
-- The correct approach to get good weapon is to equip as many RareFinders as possible, focus on loot more weapon cases. Other superstitions are useless. More cases = more chances for good weapons.
-
+- **To get good weapons, the correct approach is to equip as many Rare Finders as possible and get more weapon cases.** 
+- **There is no superstition/secret mechanic**: Drop determination is only based on Random and RareFinders. It has nothing to do with various superstitious factors (time, kill count, damage taken, full clear vs speedrun, Route A or B, 7-weapon or 9-weapon runs, character name, character color, owned items, previous drop history...). The above variables are not factored into the game's code calculations.
+- **Weapon drop determination happens at the results screen.** Drops are not determined during game initialization or upon picking up an item. It's a "gacha" for each weapon only during the mission results calculation.
+- **Rare Finders**: Significantly increase the chance for **Lv51=BW items** and **Max-Slot items**. Rare Finder effects stack and their order doesn't matter.
+- **Rare Finders do NOT affect**: Weapon type/Weapon Tag determination. These are pure Random and unrelated to Rare Finders.
+- **Equipping 7, 8, or 9 Rare Finders** (Note: The following are average probabilities based on large-scale statistics, not individual lucky)
+    - On average, you get **1.1 Lv51 items per 7-weapon run** and **1.4 per 9-weapon run**.
+    - On average, you get **one Lv51, Max-Slot, RateTag weapon per 1000 boxes**.
+    - On average, you get **one Lv51, Max-Slot, RateTag Magnum per 10000 boxes**. (for all Magnums Python + L.Hawk + PaleRider = sum rate is 9.5%)
+    
 Probability Table (open 1 weapon case) (follow probabilities are for large-scale data, not individual lucky event)
 | Equip RareFinders | Lv51 (Blue) | Rare (Special Name) | FullSlot | Blue+Rare+Fullslots sametime |
 | :------------- | :-----------: | :--------: | :------------: | :------------------: |
@@ -26,12 +30,6 @@ Probability Table (open 1 weapon case) (follow probabilities are for large-scale
 | 333            | 8.50%         | 1.5%       | 32%            | 0.04%                |
 | None           | 1.49%         | 1.5%       | 14%            | 0.003%               |
 
-In other words:
-- Equip as many as possible if you can. Removing one or two of the smallest (+) RareFinders makes little difference, but try not to remove the (+++) or (++) high-level rarefinders. 
-- Equipping 7, 8, or 9 RareFinders  
-    - On average: ~1.1 Blue per 7-weapon run, ~1.4 Blue per 9-weapon run.
-    - On average: **1 Blue + Full Slot + Rare per 1000 weapon cases**.
-    - On average: **1 Blue + Full Slot + Rare Magnum** (Python / L. Hawk / Pale Rider) per **10,000 weapon cases** (all magnum appearance rate sum is 9.5%).
 
 # Drop Determination Steps
 
