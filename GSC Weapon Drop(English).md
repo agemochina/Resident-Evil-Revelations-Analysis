@@ -14,7 +14,7 @@ TL;DR Version: Put the conclusion first.
 - **To get good weapons, the correct approach is to equip as many Rare Finders as possible and get more weapon cases.** 
 - **There is no superstition/secret mechanic**: Drop determination is only based on Random and RareFinders. It has nothing to do with various superstitious factors (time, kill count, damage taken, full clear vs speedrun, Route A or B, 7-weapon or 9-weapon runs, character name, character color, owned items, previous drop history...). The above variables are not factored into the game's code calculations.
 - **Weapon drop determination happens at the results screen.** Drops are not determined during game initialization or upon picking up an item. It's a "gacha" for each weapon only during the mission results calculation.
-- **Rare Finders**: Significantly increase the chance for **Lv51=BW items** and **Max-Slot items**. Rare Finder effects stack and their order doesn't matter.
+- **Rare Finders**: Significantly increase the chance for **Lv51=BW items** and **Max-Slot items**. Rare Finder equip effects stack and their order doesn't matter.
 - **Rare Finders do NOT affect**: Weapon type/Weapon Tag determination. These are pure Random and unrelated to Rare Finders.
 - **Equipping 7, 8, or 9 Rare Finders** (Note: The following are average probabilities based on large-scale statistics, not individual lucky)
     - On average, you get **1.1 Lv51 items per 7-weapon run** and **1.4 per 9-weapon run**.
