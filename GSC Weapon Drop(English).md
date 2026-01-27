@@ -22,7 +22,7 @@ TL;DR Version: Put the conclusion first.
     - On average, you get **one Lv51, Max-Slot, RateTag Magnum per 10000 boxes**. (for all Magnums Python + L.Hawk + PaleRider = sum rate is 9.5%)
     
 Probability Table (open 1 weapon case) (follow probabilities are for large-scale data, not individual lucky event)
-| Equip RareFinders | Lv51 (Blue) | Rare (Special Name) | FullSlot | Blue+Rare+Fullslots sametime |
+| Equip RareFinders | Lv51 (Blue) | Rare Tag (Special Name) | MaxSlot | Blue+Rare+MaxSlot sametime |
 | :------------- | :-----------: | :--------: | :------------: | :------------------: |
 | 333 222 111    | 16.43%        | 1.5%       | 50%            | 0.12%                |
 | 333 222 11     | 15.53%        | 1.5%       | 48%            | 0.11%                |
@@ -136,14 +136,14 @@ LV51 (BW) weapons are guaranteed at least +1 slot.
 Actual slot count = 1 + Weapon base slot count + Random adjustment (-2 ~ +2).
 Game logic: Based on the random score, check which tier (-2 ~ +2) it falls into. A very low score falls into the negative tiers, meaning fewer slots than standard. For Magnums, every weapon (e.g., Python vs. L. Hawk) same for the algorithm, even though L. Hawk has 1 fewer base slot than Python. 
 
-The above table is the base slot rate with **no RareFinders**. Equipping RareFinders significantly increases the Full Slot probability. **Each 1 point of RF value increases the probability by 2%**. That is:
+The above table is the base slot rate with **no RareFinders**. Equipping RareFinders significantly increases the MaxSlot probability. **Each 1 point of RF value increases the probability by 2%**. That is:
 ```
-Full Slot score threshold >= 100 - Base 14 - (RF points * 2)
+Score for MaxSlot >= 100 - Base 14 - (RF points * 2)
 ```
 
-The following table shows the score threshold for a Lv51(BW) Magnum (Python/Hawk/PaleRider) to be Full Slot, meaning the random number must be above this score:
+The following table shows the score threshold for a Lv51(BW) Magnum (Python/Hawk/PaleRider) to be MaxSlot, meaning the random number must be above this score:
 
-| RareFinders Count | Score Threshold | Note |
+| RareFinders Count | Score for MaxSlot | Note |
 |------|-------| -------- |
 | 9    | >=50| equipment of all RareFinders |
 | 8    | >=52| remove 1 (+) RareFinders |
