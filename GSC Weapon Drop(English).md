@@ -22,7 +22,7 @@ TL;DR Version: Put the conclusion first.
     - On average, you get **one Lv51, Max-Slot, RateTag Magnum per 10000 boxes**. (for all Magnums Python + L.Hawk + PaleRider = sum rate is 9.5%)
     
 Probability Table (open 1 weapon case) (follow probabilities are for large-scale data, not individual lucky event):
-|Equip RareFinders| LV51(Blue)   | MaxSlot        | Rare Tag   | Blue & Rare & MaxSlot sametime |
+|Equip RareFinders| LV51(Blue)   | MaxSlot        | Rare Tag   | Blue & MaxSlot & RareTag  sametime |
 | :------------- | :-----------: | :------------: | :--------: | :------------------: |
 | 333 222 111    | 16.43%        | 50%            | 1.5%       | 0.12%                |
 | 333 222 11     | 15.53%        | 48%            | 1.5%       | 0.11%                |
