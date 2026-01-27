@@ -12,12 +12,12 @@ TL;DR version: Conclusions first. The detailed analysis report follows.
 
 - Weapon drop determination occurs at the results screen. Initialization and pickup do not trigger the check; only the results screen processes the "lottery" one by one.
 - Weapon drops are random and unrelated to any metaphysical factors (playtime, kills, damage taken, full clear vs. speedrun, A or B, 7-weapon vs. 9-weapon runs, character name, character color, existing inventory, previous drop history...). These values do not participate in drop calculation in the code.
-- **RareFinder** Effect: Has a massive increase on **Blue (BW=Lv51) rate** and **Full Slot rate**. RareFinder are stackable, and their order on weapon parts does not matter.
-- **RareFinder** Do NOT Affect: Weapon type determination and Rare (Special Name) Tag determination. These are purely random and do not depend on RareFinder.
-- The correct approach to get good drops is to equip as many RareFinder as possible, focus on loot more weapon cases. Other superstitions are useless. More cases opened = more chances for good items.
+- **RareFinders** Effect: Has a massive increase on **Blue (BW=Lv51) rate** and **Full Slot rate**. RareFinders are stackable, and their order on weapon parts does not matter.
+- **RareFinders** Do NOT Affect: Weapon type determination and Rare (Special Name) Tag determination. These are purely random and do not depend on RareFinders.
+- The correct approach to get good drops is to equip as many RareFinders as possible, focus on loot more weapon cases. Other superstitions are useless. More cases opened = more chances for good items.
 
 Probability Table (1 weapon case) (follow probabilities are for large-scale data, not individual lucky)
-| Equip RareFinder | Lv51 (Blue) | Rare (Special Name) | FullSlot | Blue+Rare+Fullslots sametime |
+| Equip RareFinders | Lv51 (Blue) | Rare (Special Name) | FullSlot | Blue+Rare+Fullslots sametime |
 | :------------- | :-----------: | :--------: | :------------: | :------------------: |
 | 333 222 111    | 16.43%        | 1.5%       | 50%            | 0.12%                |
 | 333 222 11     | 15.53%        | 1.5%       | 48%            | 0.11%                |
@@ -26,7 +26,7 @@ Probability Table (1 weapon case) (follow probabilities are for large-scale data
 | None           | 1.49%         | 1.5%       | 14%            | 0.003%               |
 
 In other words:
-- Removing one or two of the smallest (+) RareFinder makes little difference, but try not to remove the (+++) or (++) high-level rarefinder. Equip as many as possible if you can.
+- Removing one or two of the smallest (+) RareFinders makes little difference, but try not to remove the (+++) or (++) high-level rarefinders. Equip as many as possible if you can.
 - Equipping 7, 8, or 9 RareFinders  
     - On average: ~1.1 Blue per 7-weapon run, ~1.4 Blue per 9-weapon run.
     - On average: **1 Blue + Full Slot + Rare per 1000 weapon cases**.
@@ -89,7 +89,7 @@ Weapon Level determines the weapon level (Lv48 / Lv49 / Lv50 / Lv51=BW=Blue).
 Pseudo-code:
 ```C++
     float score = rand_float_n(100.0)
-    int weapon_level = choose_level(score, rate_finders)
+    int weapon_level = choose_level(score, rare_finders)
 ```
 Explanation: First, a "score" is generated -- a random float in the range [0.0, 100.0). Then, the weapon level is calculated.
 The base data table is in the ROM file `archive\game\coop_table\weaponRarityRate.lvt`.
@@ -101,30 +101,30 @@ The base data table is in the ROM file `archive\game\coop_table\weaponRarityRate
 | +2    | 0.0546 |
 | +3    | 0.0149 |
 
-`weapon_level` refers to the additive level (+0 ~ +3) relative to the base weapon level for the stage. The base level for Ghost Ship Chaos (GSC) is Lv48, so GSC weapons drop at Lv48~Lv51. From the table, Lv51 requires +3 with a base probability of only 0.0149 (1.49%). The actual in-game SP rate is not this low because equipped **RareFinder** have a massive increase on the rate.
+`weapon_level` refers to the additive level (+0 ~ +3) relative to the base weapon level for the stage. The base level for Ghost Ship Chaos (GSC) is Lv48, so GSC weapons drop at Lv48~Lv51. From the table, Lv51 requires +3 with a base probability of only 0.0149 (1.49%). The actual in-game SP rate is not this low because equipped **RareFinders** have a massive increase on the rate.
 
 The required random score threshold for a weapon case to get Lv51:
 
-| RareFinder Count | Score Threshold | Note |
+| RareFinders Count | Score Threshold | Note |
 |------|--------| -------- |
-| 9    | >=83.57| equipment of all RareFinder |
-| 8    | >=84.47| remove 1 (+) RareFinder |
-| 7    | todo| remove 2 (+) RareFinder |
-| 3    | >=91.50| equipment only three (+++) RareFinder |
-| 0    | >=98.51| No RareFinder, base rate 1.49% |
+| 9    | >=83.57| equipment of all RareFinders |
+| 8    | >=84.47| remove 1 (+) RareFinders |
+| 7    | todo| remove 2 (+) RareFinders |
+| 3    | >=91.50| equipment only three (+++) RareFinders |
+| 0    | >=98.51| No RareFinders, base rate 1.49% |
 
-RareFinder come in three types: +, ++, +++. They are stackable(cumulative), order doesnt matter. Each type adds 1, 2, or 3 RF points respectively. For example, equipping all with Rare Finders gives a Rare Finder value (RF) = (1+2+3)*3 = 18 points.
+RareFinders come in three types: +, ++, +++. They are stackable(cumulative), order doesnt matter. Each type adds 1, 2, or 3 RF points respectively. For example, equipping all with RareFinders gives a RareFinders value (RF) = (1+2+3)*3 = 18 points.
 
 every 1 point of RF increases Lv51 probability by approximately 0.83%.
 
-Summary: Lv51 is independent of weapon type. It is determined purely based on a random score + RareFinder.
+Summary: Lv51 is independent of weapon type. It is determined purely based on a random score + RareFinders.
 
 # Step 3: Number of weapon slots
 
 Pseudo-code:
 ```C++
     float score = rand_float_n(100.0)
-    int weapon_level = choose_slots(score, weapon_id, weapon_level, rate_finders)
+    int weapon_level = choose_slots(score, weapon_id, weapon_level, rare_finders)
 ```
 Explanation: First, a "score" is generated -- a random float in the range [0.0, 100.0). Then, based on Weapon ID, whether its LV51 (BW), and RareFinders, the number of slots is calculated.
 
@@ -137,20 +137,20 @@ LV51 (BW) weapons are guaranteed at least +1 slot.
 Actual slot count = 1 + Weapon base slot count + Random adjustment (-2 ~ +2).
 Game logic: Based on the random score, check which tier (-2 ~ +2) it falls into. A very low score falls into the negative tiers, meaning fewer slots than standard. For Magnums, every weapon (e.g., Python vs. L. Hawk) same for the algorithm, even though L. Hawk has 1 fewer base slot than Python. 
 
-The above table is the base slot rate with **no RareFinder**. Equipping RareFinder significantly increases the Full Slot probability. **Each 1 point of RF value increases the probability by 2%**. That is:
+The above table is the base slot rate with **no RareFinders**. Equipping RareFinders significantly increases the Full Slot probability. **Each 1 point of RF value increases the probability by 2%**. That is:
 ```
 Full Slot score threshold >= 100 - Base 14 - (RF points * 2)
 ```
 
 The following table shows the score threshold for a Lv51(BW) Magnum (Python/Hawk/PaleRider) to be Full Slot, meaning the random number must be above this score:
 
-| Rare Finder Count | Score Threshold | Note |
+| RareFinders Count | Score Threshold | Note |
 |------|-------| -------- |
-| 9    | >=50| equipment of all RareFinder |
-| 8    | >=52| remove 1 (+) RareFinder |
-| 7    | >=54| remove 2 (+) RareFinder |
-| 3    | >=68| equipment only three (+++) RareFinder |
-| 0    | >=86| No RareFinder |
+| 9    | >=50| equipment of all RareFinders |
+| 8    | >=52| remove 1 (+) RareFinders |
+| 7    | >=54| remove 2 (+) RareFinders |
+| 3    | >=68| equipment only three (+++) RareFinders |
+| 0    | >=86| No RareFinders |
 
 # Step 4: TAG
 
