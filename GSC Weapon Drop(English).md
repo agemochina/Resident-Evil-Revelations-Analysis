@@ -191,4 +191,4 @@ Example score values:
 Explanation: No tag is 50%, Rare (Special Name) is 1.5%. Only a random score >=98.5 will result in a Rare tag.
 
 # Can random numbers be controlled?
-Extremely difficult. This is because the Random Number Generator (RNG) is globally shared across the entire game. It is not only used for weapon drop calculations, but also for enemy movement and attacks, and even numerous details like background rendering — all of which constantly consume random numbers. Its state is composed of four 32-bit integers: 4 × 32 = 128 bits of state space, with a theoretical maximum period of 2¹²⁸ – 1.
+Extremely difficult. This is because the Random Number Generator (RNG) is globally shared across the entire game. Its state is composed of four 32-bit integers: 4 × 32 = 128 bits of state space, with a theoretical maximum period of 2¹²⁸ – 1. It is not only used for weapon drop calculations, but also for enemy/player actions, and even numerous details like background rendering — all of which constantly consume random numbers. Therefore, predicting the next sequence becomes extremely difficult.
