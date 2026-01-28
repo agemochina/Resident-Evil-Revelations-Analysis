@@ -1,11 +1,13 @@
 # Resident Evil: Revelations GSC (Ghost Ship Chaos) Weapon Drop Analysis
 
 Analysis Basis
-- Disassembly and GDB debugging of game code using IDA tools
-- ROM file data parsing
-- Game Nintendo Switch Ver 1.0.1
+- Disassembly and GDB debugging of game using IDA Pro
+- ROM filesystem parsing
+- Nintendo Switch Emulator & Game ver 1.0.1
 
-PS: From the disassembled code, several places are named "gacha" (ガチャ). It seems Capcom has a clear understanding of this.
+PS: From the disassembled code, several places are named "gacha" (ガチャ). Capcom’s developers definitely know what they’re doing.
+
+.
 
 # Conclusion
 
