@@ -7,7 +7,7 @@ Analysis Basis
 - ROM filesystem parsing
 - Nintendo Switch Emulator & Game ver 1.0.1
 
-PS: From the disassembled code, several places are named "gacha" (ガチャ). Capcom’s developers definitely know what they’re doing.
+PS: From the disassembled code, several places are named "gacha" (ガチャ), the meaning is quite clear.
 
 # Conclusion
 
