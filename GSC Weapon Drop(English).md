@@ -25,8 +25,8 @@ Probability Table (open 1 weapon case) (follow probabilities are for large-scale
 |Equip RareFinders| Lv51(Blue)   | MaxSlot        | Rare Tag   | Blue & MaxSlot & RareTag  sametime |
 | :------------- | :-----------: | :------------: | :--------: | :------------------: |
 | 333 222 111    | 16.43%        | 50%            | 1.5%       | 0.12%                |
-| 333 222 11     | 15.53%        | 48%            | 1.5%       | 0.11%                |
-| 333 222 1      | 14.63%        | 46%            | 1.5%       | 0.10%                |
+| 333 222 11     | 15.54%        | 48%            | 1.5%       | 0.11%                |
+| 333 222 1      | 14.67%        | 46%            | 1.5%       | 0.10%                |
 | 333            | 8.50%         | 32%            | 1.5%       | 0.04%                |
 | 不装备         | 1.49%         | 14%            | 1.5%       | 0.003%               |
 
@@ -89,10 +89,10 @@ Pseudo-code:
     float score = rand_float_n(100.0)
     int weapon_level = choose_level(score, rare_finders)
 ```
-Explanation: First, a "score" is generated -- a random float in the range [0.0, 100.0). Then, the weapon level is calculated.
+Explanation: First, a "score" is generated, means quality -- a random float in the range [0.0, 100.0). Then the weapon level is calculated.
 The base data table is in the ROM file `archive\game\coop_table\weaponRarityRate.lvt`.
 
-| Weapon Level (Additive) | Rate   |
+| Weapon Level  | Rate   |
 |-------|--------|
 | +0    | 0.8221 |
 | +1    | 0.1084 |
@@ -101,13 +101,13 @@ The base data table is in the ROM file `archive\game\coop_table\weaponRarityRate
 
 `weapon_level` refers to the additive level (+0 ~ +3) relative to the base weapon level for the stage. The base level for Ghost Ship Chaos (GSC) is Lv48, so GSC weapons drop at Lv48~Lv51. From the table, Lv51 requires +3 with a base probability of only 0.0149 (1.49%). The actual in-game SP rate is not this low because equipped **RareFinders** have a massive increase on the rate.
 
-The required random score threshold for a weapon case to get Lv51:
+The required score for a weapon case to get Lv51:
 
-| RareFinders Count | Score Threshold | Note |
+| RareFinders Count | Lv51 Score | Note |
 |------|--------| -------- |
 | 9    | >=83.57| equipment of all RareFinders |
-| 8    | >=84.47| remove 1 (+) RareFinders |
-| 7    | todo| remove 2 (+) RareFinders |
+| 8    | >=84.46| remove 1 (+) RareFinders |
+| 7    | >=85.33| remove 2 (+) RareFinders |
 | 3    | >=91.50| equipment only three (+++) RareFinders |
 | 0    | >=98.51| No RareFinders, base rate 1.49% |
 
@@ -142,7 +142,7 @@ Score for MaxSlot >= 100 - Base 14 - (RF points * 2)
 
 The following table shows the score threshold for a Lv51(BW) Magnum (Python/Hawk/PaleRider) to be MaxSlot, meaning the random number must be above this score:
 
-| RareFinders Count | Score for MaxSlot | Note |
+| RareFinders Count | MaxSlot Score | Note |
 |------|-------| -------- |
 | 9    | >=50| equipment of all RareFinders |
 | 8    | >=52| remove 1 (+) RareFinders |
@@ -189,3 +189,6 @@ Example score values:
 - 99.9 -> 0x8009000B Rare (Special Name)
 
 Explanation: No tag is 50%, Rare (Special Name) is 1.5%. Only a random score >=98.5 will result in a Rare tag.
+
+# Can random numbers be controlled?
+Extremely difficult. This is because the Random Number Generator (RNG) is globally shared across the entire game. It is not only used for weapon drop calculations, but also for enemy movement and attacks, and even numerous details like background rendering — all of which constantly consume random numbers. Its state is composed of four 32-bit integers: 4 × 32 = 128 bits of state space, with a theoretical maximum period of 2¹²⁸ – 1.
