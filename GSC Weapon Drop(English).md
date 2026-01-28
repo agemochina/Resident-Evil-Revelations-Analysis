@@ -117,8 +117,6 @@ RareFinders come in three types: +, ++, +++. They are stackable(cumulative), ord
 
 every 1 point of RF increases Lv51 probability by approximately 0.83%.
 
-Summary: Lv51 is independent of weapon type. It is determined purely based on a random score + RareFinders.
-
 # Step 3: Number of weapon slots
 
 Pseudo-code:
@@ -137,9 +135,9 @@ LV51 (BW) weapons are guaranteed at least +1 slot.
 Actual slot count = 1 + Weapon base slot count + Random adjustment (-2 ~ +2).
 Game logic: Based on the random score, check which tier (-2 ~ +2) it falls into. A very low score falls into the negative tiers, meaning fewer slots than standard. For Magnums, every weapon (e.g., Python vs. L. Hawk) same for the algorithm, even though L. Hawk has 1 fewer base slot than Python. 
 
-The above table is the base slot rate with **no RareFinders**. Equipping RareFinders significantly increases the MaxSlot probability. **Each 1 point of RF value increases the probability by 2%**. That is:
+The above table is the slot rate with **no RareFinders**. Equipping RareFinders significantly increases the MaxSlot rate. **Each point of RF increases MaxSlot rate by 2%**. That is:
 ```
-Score for MaxSlot >= 100 - Base 14 - (RF points * 2)
+MaxSlot Score >= 100 - 14(base) - (RF points * 2)
 ```
 
 The following table shows the score threshold for a Lv51(BW) Magnum (Python/Hawk/PaleRider) to be MaxSlot, meaning the random number must be above this score:
