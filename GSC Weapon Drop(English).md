@@ -7,8 +7,6 @@ Analysis Basis
 
 PS: From the disassembled code, several places are named "gacha" (ガチャ). Capcom’s developers definitely know what they’re doing.
 
-.
-
 # Conclusion
 
 TL;DR Version: Put the conclusion first.
