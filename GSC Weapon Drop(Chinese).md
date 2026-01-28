@@ -1,9 +1,9 @@
-# ResidentEvil:Revelations 生化危机启示录 GSC(混沌鬼船) 武器掉落分析
+# ResidentEvil:Revelations 生化危机启示录 GSC(混沌鬼船) 武器掉落机制研究
 
 分析的依据
 - IDA 工具对游戏代码反汇编GDB调试
 - ROM 文件数据解析
-- Switch平台 游戏版本v1.01
+- Switch模拟器+游戏版本v1.01
 
 PS：从反汇编代码看到几处命名叫这个： gacha（ガチャ/抽卡），看上去Capcom把这事定位的很清楚
 
