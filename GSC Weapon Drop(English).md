@@ -1,6 +1,6 @@
 # Resident Evil: Revelations GSC (Ghost Ship Chaos) Weapon Drop Analysis
 
-**This research is conducted strictly for non-commercial, educational purposes, including technical exchange and academic discussion of game mechanics.**
+*This research is conducted strictly for non-commercial, educational purposes, including technical exchange and academic discussion of game mechanics.*
 
 Analysis Basis
 - Disassembly and GDB debugging of game using IDA Pro
