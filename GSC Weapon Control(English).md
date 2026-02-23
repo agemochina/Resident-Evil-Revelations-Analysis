@@ -70,30 +70,32 @@ Miscellaneous
 Current Verified Conclusions
 - **Main Likely Cause**: The moment you open a door, and the room on the other side already has spawned enemies. This is uncontrollable and depends purely on luck.
 - **Secondary Possible Cause**: Being in combat or moving while enemies are present. When a Ooze-Chunk explodes and spawns many new enemies, issues can also arise.
-- Rooms with no enemies will not desync, regardless of actions taken.
+- Rooms with no enemies will never out of control, regardless of actions taken.
 
-The area with the highest desync probability is the path from the Kitchen into the pipes. If there are enemies, each door opening moment carries a desync risk. The longer enemies remain alive in a room, the higher the chance of problems. Therefore, consider the following approach:
-- In the Ouroboros Chamber hallway, lure enemies using the BOW elevator shaft. Try not to let Cephalos explode. If they do, clear them quickly.
+The area with the highest out of control probability is the path from the Kitchen into the pipes. If there are enemies, each door opening moment carries a failure risk. The longer enemies remain alive in a room, the higher the chance of problems. Therefore, consider the following approach:
+- In the U way, use BOW Try not to let Ooze-Chunk explode. If it do, clear them quickly.
 - Clear the room before the Kitchen quickly.
 - Clear the Kitchen quickly.
-- On the second return to the Ouroboros Chamber hallway heading towards the elevator, kill the Cephalo as far away as possible, ideally with an electric grenade.
-- Getting off the elevator is very prone to door-opening desync; this is purely down to luck.
-- After getting off the elevator, clear all 6 enemies. After clearing them, you can measure with the amiibo inside the pipes. If desync occurs, restart the run. If not, the run is mostly successful.
-- Clear the Casino quickly. Kill the Cephalo before opening the steering wheel door.
-- Clear the Observation Deck quickly. Kill the Cephalo.
+- On the second return to the U way heading towards the elevator, kill the Aculeozzo as far away as possible, ideally with an shock grenade.
+- Getting off the elevator is hard. this is purely depends on luck.
+- After getting off the elevator, clear all 6 enemies before water. After clearing them, you can measure with the amiibo inside the pipes. If out of control, restart the run. If not, the run is mostly successful.
+- Clear the Casino quickly. Kill the Aculeozzo before opening the steering wheel door.
+- Clear the Observation Deck quickly. Kill the Aculeozzo.
 
 Additionally, using the Pulse Grenade frequently is helpful. When it stuns enemies, they consume less RNG, making the process safer.
 
-## Amiibo Usage Pitfalls to Avoid
+## Amiibo Usage hints
 
 All the following errors will cause alignment/measurement to fail. You will need to re-measure 5 times to realign. If you have already passed the target by then, you'll have to use the next weapon drop position.
-1.  **Must Remove After Each Scan**: After scanning the amiibo each time, you must remove it from the controller's NFC read area. Do not leave it pressed against it. Scanning it repeatedly without removing can cause the game to error, saying "This amiibo cannot be used again today."
+
+some hints to avoid errors:
+1.  **Must Remove After Each Scan**: After scanning the amiibo each time, you must remove it from the controller's NFC read area. Scanning it repeatedly without removing can cause the game to error, saying "This amiibo cannot be used again today."
 2.  **Wait 3 Seconds Between Scans**: Leave a gap of a few seconds between scans. Scanning too quickly can also trigger the "cannot be used again today" error.
-3.  **Select Correct Menu Option**: The menu option for the unlimited-use amiibo must be selected correctly, otherwise it will error with "That's not an amiibo."
+3.  **Select Correct Menu Option**: The menu option for the unlimited-use amiibo emulator must be selected correctly, otherwise it will error with "That's not an amiibo."
 4.  **Scanning Fails**: If you encounter a situation where it won't scan, try pressing the Home button to return to the main menu, then switch back to the game. It should scan then.
 
 ## Final Friendly Reminders (Avoiding Bans/Restrictions)
 
 Although this is a single-player method and doesn't require hacking, to avoid any extreme scenarios where the official might take issue (e.g., regarding the use of unlimited-use amiibos), it's advisable to:
-- **Stay Offline Throughout**: Experiment offline. Activate Airplane mode; NFC scanning still works.
+- **Stay Offline**: Activate Airplane mode, enable NFC, amiibo scanning still works.
 - **Protect Your Privacy**: If you share screenshots of your obtained weapons online, **remember to blur/mosaic any part showing your Re.net account name.**
