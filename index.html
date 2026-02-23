@@ -1,1 +1,977 @@
-test
+<!DOCTYPE html>
+<!-- 
+home page: https://github.com/agemochina/Resident-Evil-Revelations-Analysis
+author: agemo@163.com
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rev1 Rare Weapon Predictor</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Courier New";
+      background: #fff;
+      color: #000;
+      margin: 0;
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+    a, a:visited, a:hover, a:active {
+        color: blue !important;
+        text-decoration: none !important;  /* 去除下划线 */
+    }
+    .container {
+      margin: 0;
+      text-align: left;
+    }
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 0 0 1rem 0;
+      color: #000;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: inline-block;
+      font-size: 0.9rem;
+      color: #000;
+      margin-bottom: 0.35rem;
+    }
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      background: #fff;
+      border: 1px solid #999;
+      border-radius: 6px;
+      color: #000;
+      font-size: 1rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #333;
+    }
+    .hint {
+      font-size: 0.8rem;
+      color: #333;
+      margin-top: 0.25rem;
+    }
+    button {
+      padding: 0.6rem 1.2rem;
+      background: #333;
+      color: #fff;
+      border: 1px solid #333;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    #positionCurrent {
+      margin-top: 0.35rem;
+      width: 90%;
+      min-width: 0;
+      padding: 0.6rem 0.75rem;
+      background: #fff;
+      border: 1px solid #999;
+      border-radius: 6px;
+      color: #000;
+      font-size: 0.9rem;
+    }
+    #positionCurrent.error { border-color: #c00; color: #c00; }
+    #positionCurrent.success { border-color: #060; }
+    select {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      background: #fff;
+      border: 1px solid #999;
+      border-radius: 6px;
+      color: #000;
+      font-size: 1rem;
+    }
+    .target-weapon-select {
+      width: max-content;
+      max-width: 20ch;
+    }
+    .position-input {
+      width: 12ch;
+      max-width: 12ch;
+    }
+    .align-tips-box {
+      width: 90%;
+      min-width: 0;
+      padding: 0.6rem 0.75rem;
+      background: #fff;
+      border: 1px solid #999;
+      border-radius: 6px;
+      color: #000;
+      font-size: 0.9rem;
+      font-family: inherit;
+      /* 添加以下属性 */
+      white-space: pre-wrap;  /* 保留换行和空格 */
+      word-wrap: break-word;  /* 长单词换行 */
+      line-height: 1.4;       /* 设置合适的行高 */
+      min-height: 2.8rem;     /* 最小高度，约2行 */
+    }
+    .row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+    .row .form-group { flex: 1; min-width: 120px; }
+    .input-with-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .input-with-button input[type="text"] {
+      flex: 1;
+    }
+    
+    /* 新增样式 */
+    .advanced-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      user-select: none;
+      color: #333;
+      font-size: 0.9rem;
+    }
+    .toggle-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #999;
+      border-radius: 4px;
+      background: #f5f5f5;
+      transition: transform 0.2s ease;
+    }
+    .toggle-icon.expanded {
+      transform: rotate(180deg);
+    }
+    .advanced-settings {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .advanced-settings.expanded {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .advanced-settings h3 {
+      margin: 0 0 0.75rem 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .lang-switch {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    .lang-option {
+      cursor: pointer;
+      padding: 0.2rem 0.6rem;
+      border: 1px solid #aaa;
+      border-radius: 12px;
+      background: #f0f0f0;
+      user-select: none;
+    }
+    .lang-option.active {
+      background: #333;
+      color: #fff;
+      border-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="lang-switch" id="langSwitch">
+      <span class="lang-option active" data-lang="zh">中文</span>
+      <span class="lang-option" data-lang="en">English</span>
+    </div>    
+    <div class="form-group" style="text-align: center;">
+      <div class="i18n" data-zh="生化危机启示录1-稀有武器预测器(Switch)" data-en="Resident Evil Revelations1 - Rare Weapon Predictor (Switch)"></div>
+      <a href="https://github.com/agemochina/Resident-Evil-Revelations-Analysis/" target="_blank"><span class="i18n" data-zh="使用说明/Help" data-en="Help / Guide">使用说明/Help</span></a>
+    </div>
+    <form id="form">
+      <div class="advanced-toggle" id="advancedToggle">
+        <div class="toggle-icon" id="toggleIcon">▼</div>
+        <span class="i18n" data-zh="设置" data-en="Settings"></span>
+      </div>
+      
+      <div class="advanced-settings" id="advancedSettings">
+        <div class="form-group">
+          <label for="amiibo_hi">Amiibo</label>
+          <select id="amiibo_hi" name="amiibo_hi">
+            <option value="1" selected>洛克人(Mega Man)</option>
+            <option value="0">其他(Other)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="max">随机数搜索最大值(Rand Search limit)</label>
+          <input type="number" id="max" name="max" min="1000" step="1000" value="300000" />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="amiibo" class="i18n" data-zh="输入逗号分隔的Amiibo序列" data-en="input comma-separated amiibo sequence"></label>
+        <a onclick="amiibo_help()">(help?)</a>
+        <div class="input-with-button">
+          <input type="text" id="amiibo" name="amiibo" placeholder="" value="" />
+          <button type="submit" id="btn">🔍︎</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="form-group" style="margin-top: 1.25rem;">
+    <label for="positionCurrent" class="i18n" data-zh="测量的随机数位置" data-en="current rand position"></label>
+    <br>
+    <input type="text" id="positionCurrent" readonly placeholder="—" />
+  </div>
+  <div class="form-group" style="margin-top: 0.5rem;">
+    <label for="target_weapon" class="i18n" data-zh="目标武器" data-en="Target Weapon"></label>
+    <div class="row" style="align-items: flex-end;">
+      <select id="target_weapon" name="target_weapon" class="target-weapon-select">
+        <option value="M92F">启示者(Revelator)</option>
+        <option value="Government">独裁者(Dictator)</option>
+        <option value="G18">杀戮者(Slaughter)</option>
+        <option value="PC365">奇美拉(Chimaera)</option>
+        <option value="Python" selected>魔蛇(Serpent)</option>
+        <option value="L.Hawk">雷霆之鹰(ThunderRaptor)</option>
+        <option value="PaleRider">死神(Grim Reaper)</option>
+        <option value="MP5">掠夺者(Marauder)</option>
+        <option value="P-90">风暴之主(Lead Storm)</option>
+        <option value="AUG">毒针(Stinger)</option>
+        <option value="G36">侵略者(Aggressor)</option>
+        <option value="HighRoller">赌徒二世(HighRoller II)</option>
+        <option value="Windham">巨锤(Sledgehammer)</option>
+        <option value="M3">突击者(Raider)</option>
+        <option value="Hydra">地狱犬(Cerberus)</option>
+        <option value="Drake">蛇龙(Lindwurm)</option>
+        <option value="M40A1">野兔(Zaytsev)</option>
+        <option value="PSG1">潜行者(Prowler)</option>
+        <option value="Muramasa">零号(Zeroth)</option>
+      </select>
+      <div class="form-group" style="margin-bottom: 0; margin-left: 0rem;">
+        <input type="text" id="positionTarget" readonly placeholder="—" class="position-input" />
+      </div>
+    </div>
+  </div>
+  <div class="form-group" style="margin-top: 1rem;">
+    <div id="alignTips" class="align-tips-box"></div>
+  </div>
+  <script>
+/**
+ * Author: agemo@163.com
+ */
+
+// ============== config ==============
+var _MAX_LIMIT = 30 * 10000;
+
+function config_limit_set(i) {
+  _MAX_LIMIT = i;
+}
+
+function config_limit_get() {
+  return _MAX_LIMIT;
+}
+
+// ============== RNG ==============
+var G_CONTEXT = { state: [0, 0, 0, 0] };
+
+function _rand_init_seed(ctx) {
+  // 与 Python RNG 一致：val1=0x08501947CAB55256, val2=0xD9A8FDA25C500E44 -> state[0..3]
+  ctx.state[0] = 0xcab55256;
+  ctx.state[1] = 0x08501947;
+  ctx.state[2] = 0x5c500e44;
+  ctx.state[3] = 0xd9a8fda2;
+}
+
+function rand_init_seed() {
+  _rand_init_seed(G_CONTEXT);
+}
+
+function _rand_uint32(ctx) {
+  var w8 = ctx.state[0] >>> 0;
+  var w9 = ctx.state[1] >>> 0;
+  var w10 = ctx.state[3] >>> 0;
+
+  w8 = (w8 ^ ((w8 << 15) & 0xffffffff)) >>> 0;
+  ctx.state[0] = ctx.state[1];
+
+  var w9_temp = ctx.state[2] >>> 0;
+  var w10_temp = w10;
+
+  w8 = (w8 ^ (w8 >>> 4) ^ w10_temp ^ (w10_temp >>> 21)) >>> 0;
+
+  ctx.state[1] = w9_temp;
+  ctx.state[2] = w10_temp;
+  ctx.state[3] = w8;
+
+  return w8;
+}
+
+function rand_uint32() {
+  return _rand_uint32(G_CONTEXT);
+}
+
+function rand_skip(n) {
+  n = n || 1;
+  for (var i = 0; i < n; i++) rand_uint32();
+}
+
+function rand_backup_state() {
+  return { state: G_CONTEXT.state.slice(0) };
+}
+
+function rand_restore_state(state) {
+  G_CONTEXT = { state: state.state.slice(0) };
+}
+
+function rand_int_range(a, b) {
+  var minVal = Math.min(a, b);
+  var maxVal = Math.max(a, b);
+  var range = maxVal - minVal + 1;
+  var remainder = (rand_uint32() >>> 0) % range;
+  return remainder + minVal;
+}
+
+function rand_int_range_by_uint32(a, b, randVal) {
+  var minVal = Math.min(a, b);
+  var maxVal = Math.max(a, b);
+  var range = maxVal - minVal + 1;
+  var remainder = (randVal >>> 0) % range;
+  return remainder + minVal;
+}
+
+var NORMALIZE_CONSTANT = 2.328306436538696e-10;
+
+function rand_float_n(n) {
+  var random_uint = rand_uint32();
+  var random_float = random_uint;
+  var normalized = random_float * NORMALIZE_CONSTANT;
+  return normalized * n;
+}
+
+// ============== weapon (from weapon.py) ==============
+var weapon_table = [
+  { id: 0x80051000, rate: 8.0, name: "M92F" },
+  { id: 0x80051010, rate: 7.5, name: "Government" },
+  { id: 0x80051040, rate: 2.0, name: "G18" },
+  { id: 0x80051060, rate: 7.0, name: "PC365" },
+  { id: 0x80051100, rate: 5.0, name: "Python" },
+  { id: 0x80051110, rate: 3.0, name: "L.Hawk" },
+  { id: 0x80051120, rate: 1.5, name: "PaleRider" },
+  { id: 0x80051200, rate: 7.5, name: "MP5" },
+  { id: 0x80051210, rate: 6.0, name: "P-90" },
+  { id: 0x80051220, rate: 7.0, name: "AUG" },
+  { id: 0x80051230, rate: 7.5, name: "G36" },
+  { id: 0x80051250, rate: 2.0, name: "HighRoller" },
+  { id: 0x80051300, rate: 8.0, name: "Windham" },
+  { id: 0x80051310, rate: 7.5, name: "M3" },
+  { id: 0x80051320, rate: 2.0, name: "Hydra" },
+  { id: 0x80051330, rate: 1.5, name: "Drake" },
+  { id: 0x80051400, rate: 8.0, name: "M40A1" },
+  { id: 0x80051410, rate: 7.5, name: "PSG1" },
+  { id: 0x80051420, rate: 1.5, name: "Muramasa" }
+];
+
+function weapon_by_score(score) {
+  var cumulative_weight = 0;
+  for (var i = 0; i < weapon_table.length; i++) {
+    cumulative_weight += weapon_table[i].rate;
+    if (cumulative_weight > score) {
+      return weapon_table[i].name;
+    }
+  }
+  throw new Error("invalid score " + score);
+}
+
+/**
+ * Find smallest position > startPos+300 where lv51_fullslot_rare yields weaponName.
+ * Logic from test_weapon.list_lv51_fullslot_rare.
+ * @returns {number|null} position or null if not found
+ */
+function find_weapon_position_after(startPos, weaponName) {
+  var MAX_LIMIT = config_limit_get();
+  var minI = startPos + 301;
+  if (minI >= MAX_LIMIT) return null;
+  rand_init_seed();
+  rand_skip(minI);
+  for (var i = minI; i < MAX_LIMIT; i++) {
+    var state = rand_backup_state();
+    var v1 = rand_float_n(100.0);
+    var v2 = rand_float_n(100.0);
+    var v3 = rand_int_range(0, 99);
+    var v4 = rand_float_n(100.0);
+    if (v2 >= 83.57 && v3 >= 50 && v4 >= 98.5) {
+      var weapon = weapon_by_score(v1);
+      if (weaponName && weapon.toLowerCase() === weaponName.toLowerCase()) {
+        return i;
+      }
+    }
+    rand_restore_state(state);
+    rand_uint32();
+  }
+  return null;
+}
+
+// ============== amiibo ==============
+var item_name_table = [
+  { id: 0x80040101, name: "草药", short_name: "cy", en_name: "herb" },
+  { id: 0x80040200, name: "手枪", short_name: "sq", en_name: "handgun" },
+  { id: 0x80040204, name: "麦林", short_name: "ml", en_name: "magnum" },
+  { id: 0x80040202, name: "机枪", short_name: "jq", en_name: "machine" },
+  { id: 0x80040201, name: "散弹", short_name: "sd", en_name: "shotgun"  },
+  { id: 0x80040203, name: "步枪", short_name: "bq", en_name: "rifle" },
+  { id: 0x80051900, name: "手榴弹", short_name: "sld", en_name: "grenade" },
+  { id: 0x80051950, name: "BOW", short_name: "bow", en_name: "bow" },
+  { id: 0x80051940, name: "震撼", short_name: "zh", en_name: "shock" },
+  { id: 0x80051960, name: "脉冲", short_name: "mc", en_name: "pulse" }
+];
+
+function item_name_table_str() {
+  var ret = ""
+  for (var i = 0; i < item_name_table.length; i++) {
+    ret += item_name_table[i].short_name + " = " + item_name_table[i].name + " = " + item_name_table[i].en_name + "\n";
+  }
+  return ret;
+
+}
+var item_table_hi = [
+  { id: 0x80040101, quantity: 2, weight: 2 },
+  { id: 0x80040200, quantity: 18, weight: 2 },
+  { id: 0x80040204, quantity: 4, weight: 2 },
+  { id: 0x80040202, quantity: 50, weight: 2 },
+  { id: 0x80040201, quantity: 9, weight: 2 },
+  { id: 0x80040203, quantity: 7, weight: 2 },
+  { id: 0x80051900, quantity: 2, weight: 2 },
+  { id: 0x80051950, quantity: 2, weight: 2 },
+  { id: 0x80051940, quantity: 2, weight: 2 },
+  { id: 0x80051960, quantity: 2, weight: 2 },
+  { id: 0x80040101, quantity: 4, weight: 8 },
+  { id: 0x80040200, quantity: 30, weight: 8 },
+  { id: 0x80040204, quantity: 8, weight: 8 },
+  { id: 0x80040202, quantity: 70, weight: 8 },
+  { id: 0x80040201, quantity: 14, weight: 8 },
+  { id: 0x80040203, quantity: 12, weight: 8 },
+  { id: 0x80051900, quantity: 4, weight: 8 },
+  { id: 0x80051950, quantity: 4, weight: 8 },
+  { id: 0x80051940, quantity: 4, weight: 8 },
+  { id: 0x80051960, quantity: 4, weight: 8 }
+];
+
+var item_table_low = [
+  { id: 0x80040101, quantity: 1, weight: 4 },
+  { id: 0x80040200, quantity: 12, weight: 4 },
+  { id: 0x80040204, quantity: 4, weight: 4 },
+  { id: 0x80040202, quantity: 50, weight: 4 },
+  { id: 0x80040201, quantity: 9, weight: 4 },
+  { id: 0x80040203, quantity: 7, weight: 4 },
+  { id: 0x80051900, quantity: 1, weight: 4 },
+  { id: 0x80051950, quantity: 1, weight: 4 },
+  { id: 0x80051940, quantity: 1, weight: 4 },
+  { id: 0x80051960, quantity: 1, weight: 4 },
+  { id: 0x80040101, quantity: 2, weight: 6 },
+  { id: 0x80040200, quantity: 18, weight: 6 },
+  { id: 0x80040204, quantity: 4, weight: 6 },
+  { id: 0x80040202, quantity: 50, weight: 6 },
+  { id: 0x80040201, quantity: 9, weight: 6 },
+  { id: 0x80040203, quantity: 7, weight: 6 },
+  { id: 0x80051900, quantity: 2, weight: 6 },
+  { id: 0x80051950, quantity: 2, weight: 6 },
+  { id: 0x80051940, quantity: 2, weight: 6 },
+  { id: 0x80051960, quantity: 2, weight: 6 }
+];
+
+var CUR_TABLE = item_table_hi;
+
+function get_name_by_id(id) {
+  for (var i = 0; i < item_name_table.length; i++) {
+    if (item_name_table[i].id === id) {
+      return { name: item_name_table[i].name, short_name: item_name_table[i].short_name, en_name: item_name_table[i].en_name };
+    }
+  }
+  return null;
+}
+
+function amiibo_set_hi(hi) {
+  CUR_TABLE = hi ? item_table_hi : item_table_low;
+  var poker_card = 0;
+  for (var i = 0; i < CUR_TABLE.length; i++) {
+    var info = get_name_by_id(CUR_TABLE[i].id);
+    CUR_TABLE[i].name = info.name;
+    CUR_TABLE[i].short_name = info.short_name;
+    CUR_TABLE[i].en_name = info.en_name;
+    CUR_TABLE[i].poker_card = String.fromCharCode(65 + poker_card);
+    poker_card++;
+  }
+}
+
+function amiibo_from_dict(item) {
+  return {
+    id: "0x" + item.id.toString(16),
+    name: item.name,
+    short_name: item.short_name,
+    en_name: item.en_name,
+    quantity: item.quantity,
+    rate: item.weight,
+    poker_card: item.poker_card || ""
+  };
+}
+
+function amiibo_same(a, b) {
+  return a.id === b.id && a.quantity === b.quantity;
+}
+
+function find_amiibo_by_name_and_quantity(name, quantity) {
+  for (var i = 0; i < CUR_TABLE.length; i++) {
+    var it = CUR_TABLE[i];
+    if ((it.name === name || it.short_name === name || it.en_name == name) && it.quantity === quantity) {
+      return it;
+    }
+  }
+  return null;
+}
+
+function find_amiibo_by_rand(random_value) {
+  var cumulative_weight = 0;
+  for (var i = 0; i < CUR_TABLE.length; i++) {
+    cumulative_weight += CUR_TABLE[i].weight;
+    if (cumulative_weight > random_value) {
+      return amiibo_from_dict(CUR_TABLE[i]);
+    }
+  }
+  throw new Error("invalid random_value " + random_value);
+}
+
+function rand_amiibo(rnd) {
+  var random_value;
+  if (rnd !== undefined && rnd !== null) {
+    random_value = rand_int_range_by_uint32(0, 99, rnd);
+  } else {
+    random_value = rand_int_range(0, 99);
+  }
+  return find_amiibo_by_rand(random_value);
+}
+
+function amiibo_parse_item(itemStr) {
+  if (!itemStr || itemStr === "") return null;
+
+  var first_digit_index = -1;
+  for (var i = 0; i < itemStr.length; i++) {
+    if (/\d/.test(itemStr[i])) {
+      first_digit_index = i;
+      break;
+    }
+  }
+
+  if (first_digit_index === -1) {
+    throw new Error("amiibo item bad format: " + itemStr + ". Expected 'name' followed by 'quantity'");
+  }
+
+  var name = itemStr.substring(0, first_digit_index);
+  var quantity_str = itemStr.substring(first_digit_index);
+  var quantity = parseInt(quantity_str, 10);
+  if (isNaN(quantity)) {
+    throw new Error("amiibo item bad quantity " + itemStr + ". Quantity must be number.");
+  }
+
+  var item = find_amiibo_by_name_and_quantity(name, quantity);
+  if (!item) {
+    throw new Error("amiibo item not found: " + name + " * " + quantity);
+  }
+  return amiibo_from_dict(item);
+}
+
+/**
+ * @param {Array} seqs - 元素为 number(0=SKIP 或 raw uint32) 或 AmiiboItem
+ * @param {function(string)} output - 每行输出回调，替代 print
+ */
+function match_sequence(seqs, output) {
+  output = output || function () {};
+  var MAX_LIMIT = config_limit_get();
+  var MAX_OUTPUT = 20;
+  var outCount = 0;
+
+  for (var i = 0; i < MAX_LIMIT; i++) {
+    var state = rand_backup_state();
+
+    var all_match = true;
+    for (var s = 0; s < seqs.length; s++) {
+      var seq = seqs[s];
+      if (typeof seq === "number") {
+        if (seq === 0) {
+          rand_uint32();
+          continue;
+        } else {
+          var v = rand_uint32();
+          if (v !== seq) {
+            all_match = false;
+            break;
+          }
+        }
+      } else {
+        var item = rand_amiibo();
+        if (!amiibo_same(item, seq)) {
+          all_match = false;
+          break;
+        }
+      }
+    }
+
+    if (all_match) {
+      if (outCount >= MAX_OUTPUT) {
+        return;
+      }
+      var cur = rand_backup_state();
+      var idx = i + 1;
+      var used = seqs.length;
+      var start = idx;
+      var end = idx + used - 1;
+      var curStr =
+        cur.state[0].toString(16).toUpperCase().padStart(8, "0") +
+        " " +
+        cur.state[1].toString(16).toUpperCase().padStart(8, "0") +
+        " " +
+        cur.state[2].toString(16).toUpperCase().padStart(8, "0") +
+        " " +
+        cur.state[3].toString(16).toUpperCase().padStart(8, "0");
+      //output("match @" + start + " ~ @" + end + " (+" + (end - start) + ") final state: " + curStr);
+      output(end);
+      outCount++;
+    }
+
+    rand_restore_state(state);
+    rand_uint32();
+  }
+}
+
+/**
+ * 参考 test_amiibo_match.test_make_amiibo_by_idx_list
+ * @param {string} list_str - 如 "idx,count" 或 "idx,-count"
+ * @param {number} interval
+ * @returns {{idx: number, amiibo: {short_name: string, quantity: number}}[]}
+ */
+function test_make_amiibo_by_idx_list(list_str, interval) {
+  var parts = list_str.split(",").map(function (s) { return s.trim(); });
+  if (parts.length !== 2) return [];
+  var idx = parseInt(parts[0], 10);
+  var max_count = parseInt(parts[1], 10);
+  if (isNaN(idx) || isNaN(max_count)) return [];
+  if (max_count < 0) {
+    max_count = -max_count;
+    idx = idx - (max_count - 1) * (interval + 1);
+  }
+  var result = [];
+  rand_skip(idx - 1);
+  for (var i = 0; i < max_count; i++) {
+    var ret = rand_amiibo();
+    result.push({ idx: idx, amiibo: { name:ret.name, en_name: ret.en_name, short_name: ret.short_name, quantity: ret.quantity } });
+    rand_skip(interval);
+    idx = idx + interval + 1;
+  }
+  return result;
+}
+
+/**
+ * @param {Array} seqs - 追加到此数组
+ * @param {number} interval
+ * @param {string[]} amiibos - 例如 ["草药2", "机枪50"]
+ */
+function seqs_append_amiibo(seqs, interval, amiibos) {
+  var idx = 0;
+  for (var i = 0; i < amiibos.length; i++) {
+    if (idx !== 0) {
+      for (var skip = 0; skip < interval; skip++) {
+        seqs.push(0);
+      }
+    }
+    var item = amiibo_parse_item(amiibos[i]);
+    if (!item || item.id === "0x0") {
+      throw new Error("invalid amiibo");
+    }
+    seqs.push(item);
+    idx++;
+  }
+}
+
+/**
+ * 匹配 Amiibo 序列（与 main.py 中调用方式一致）
+ * @param {string} seq_str - 逗号分隔，如 "草药2，机枪50，手枪30"（支持全角逗号）
+ * @param {number} interval - 间隔，如 16=emu 12=switch
+ * @param {function(string)} output - 每行输出回调；不传则返回结果数组
+ * @returns {string[]} 若未传 output，返回所有匹配行
+ */
+function test_match_amiibo_seq(seq_str, interval, output) {
+  seq_str = seq_str.replace(/，/g, ",");
+  var amiibos = seq_str.split(",").map(function (s) {
+    return s.trim();
+  }).filter(Boolean);
+
+  if (amiibos.length < 5) {
+    throw new Error("Sequence must have at least 5 items (got " + amiibos.length + ").");
+  }
+
+  var seqs = [];
+  seqs_append_amiibo(seqs, interval, amiibos);
+
+  var lines = [];
+  var out = output || function (msg) {
+    lines.push(msg);
+  };
+  match_sequence(seqs, out);
+
+  if (!output) {
+    return lines;
+  }
+}
+</script>
+  <script>
+    function switchLanguage(lang) {
+      // 更新所有 .i18n 元素的内容：根据 data-zh / data-en 替换 innerText (保留HTML标签不影响)
+      document.querySelectorAll('.i18n').forEach(el => {
+        const zhText = el.getAttribute('data-zh');
+        const enText = el.getAttribute('data-en');
+        if (lang === 'en' && enText) {
+          el.innerText = enText;
+        } else if (lang === 'zh' && zhText) {
+          el.innerText = zhText;
+        }
+      });
+
+      // 切换active样式
+      document.querySelectorAll('.lang-option').forEach(opt => {
+        if (opt.dataset.lang === lang) opt.classList.add('active');
+        else opt.classList.remove('active');
+      });
+    }
+
+    // 绑定语言切换点击
+    document.querySelectorAll('.lang-option').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const lang = this.dataset.lang;
+        switchLanguage(lang);
+      });
+    });
+
+    // 默认中文 (active已存在, 但确保内容正确)
+    switchLanguage('zh');
+
+    function isEn() {
+      return document.querySelector('.lang-option.active')?.dataset.lang === 'en';
+    }
+
+    function amiibo_help() {
+      if (isEn()) {
+        alert("Input comma-separated sequence, format: type1quantity1, type2quantity2,... Example:\n"
+          + "bow4,handgun30,bow4,machine70,magnum8\n\n"
+          + "Supported types: abbreviation, Chinese, English:\n" + item_name_table_str()
+        );
+      } else {
+          alert("输入以逗号分隔的序列，类型1数量1,类型2数量2,... 示例:\n"
+          + "bow4,sq30,bow4,jq70,ml8\n"
+          + "bow4,手枪30,bow4,机枪70,麦林8\n\n"
+          + "类型支持 缩写、中文、英文：\n" + item_name_table_str() 
+        );
+      }
+    }
+    (function () {
+      var form = document.getElementById("form");
+      var positionCurrent = document.getElementById("positionCurrent");
+      var positionCurrentAmiibo = "";
+      var btn = document.getElementById("btn");
+      var advancedToggle = document.getElementById("advancedToggle");
+      var advancedSettings = document.getElementById("advancedSettings");
+      var toggleIcon = document.getElementById("toggleIcon");
+      
+      var isExpanded = false;
+      var positionTarget = document.getElementById("positionTarget");
+      var targetWeaponSelect = document.getElementById("target_weapon");
+      var alignTips = document.getElementById("alignTips");
+
+      function updatePosition() {
+        var outVal = (positionCurrent.value || "").trim();
+        var weapon = (targetWeaponSelect.value || "").trim();
+        positionTarget.value = "";
+        alignTips.textContent = "";
+        if (!weapon || !outVal) return;
+        var base = null;
+        var m = outVal.match(/match @(\d+)/);
+        if (m) {
+          base = parseInt(m[1], 10);
+        } else {
+          var num = parseInt(outVal, 10);
+          if (!isNaN(num) && String(num) === outVal) base = num;
+        }
+        if (base == null || isNaN(base)) return;
+        try {
+          var pos = find_weapon_position_after(base, weapon);
+          positionTarget.value = pos != null ? String(pos) : "—";
+          if (pos != null) {
+            var posAlign = pos - 147;
+            var diff = posAlign - base;
+            if (diff > 400) {
+              if(isEn()) {
+                alignTips.textContent = "Current random number position is far from target weapon, distance: " + (diff+147) + "\nYou need to consume random numbers until distance is below 500.\nPressing up or down consumes 2, holding up consumes about 500 per minute, scanning an amiibo consumes 13\nYou need to measure at least 6 amiibo to know the exact current random position. You can consume while measuring";
+              } else {
+                alignTips.textContent = "当前随机数位置离目标武器还远，距离为:" + (diff+147) +"\n你需要消耗随机数到距离500左右。\n按上或下消耗2个，按住上不放开每分钟消耗约500，扫一次amiibo消耗13\n你需要测量至少6个连续的amiibo才知道当前随机数准确位置，你可以边消耗边测量";
+              }
+            } else {
+              var maxLimit = parseInt(document.getElementById("max").value, 10) || 350000;
+              var amiiboHi = parseInt(document.getElementById("amiibo_hi").value, 10) ? true : false;
+              config_limit_set(maxLimit);
+              amiibo_set_hi(amiiboHi);
+              rand_init_seed();
+              var list = test_make_amiibo_by_idx_list(posAlign + ",-50", 12);
+              var valid = [];
+              for (var k = 0; k < list.length; k++) {
+                var d = list[k].idx - 13 - base;
+                if (d >= 0 && ((d % 4) === 0) || valid.length > 0) {
+                  valid.push({ positionAmiibo: list[k].idx, distance: d, name:list[k].amiibo.name, en_name:list[k].amiibo.en_name, short_name: list[k].amiibo.short_name, quantity: list[k].amiibo.quantity });
+                }
+              }
+              if (valid.length > 0) {
+                var first = valid[0];
+                var lines = [];
+                if(isEn()) {
+                  lines = [
+                    "Current game screen should show: Obtained " + positionCurrentAmiibo,
+                    "Must strictly follow the instructions below, no extra button presses:",
+                    "1. Press A to got",
+                    "2. Press up/down pair " + (first.distance / 4) + " times (up/down pair means press up and down once each, this will return the menu to amiibo exactly)",
+                    "3. Press A to open Amiibo scan, continue scanning amiibo, expected follow sequence is:"
+                  ];
+                  for (var v = 0; v < valid.length; v++) {
+                    lines.push("" + valid[v].positionAmiibo + " : " + valid[v].en_name + valid[v].quantity);
+                  }
+                  lines.push("After all the above amiibo sequences are correctly predicted, press A to got, then press B to return to the previous menu, then press down to select Retire game and press A, then press up to select yes, then press A to enter the results screen. The first box opened will contain the expected weapon.");
+                } else {
+                  lines = [
+                    "当前游戏画面应该显示：已获得 " + positionCurrentAmiibo,
+                    "必须严格按下述指令操作，不要有多余按键: ",
+                    "1. 按A领取",
+                    "2. 按上下对 " + (first.distance / 4) + " 次（上下对是指上下各按一次，这样菜单正好回到amiibo）",
+                    "3. 按A打开Amiibo扫描界面，继续扫描amiibo，预期后续序列如下："
+                  ];
+                  for (var v = 0; v < valid.length; v++) {
+                    lines.push("" + valid[v].positionAmiibo + " : " + valid[v].name + valid[v].quantity);
+                  }
+                  lines.push("上述amiibo序列预测全对之后，按A领取，再按B返回上一层菜单，再按下选择放弃游戏并A确定，再按上选是，再按A进入结算。第一个箱子开出来的即为预期武器。")
+                }
+                alignTips.textContent = lines.join("\n");
+              } else {
+                alignTips.textContent = "align failed";
+              }
+            }
+          }
+        } catch (e) {
+          positionTarget.value = "—";
+        }
+      }
+
+      targetWeaponSelect.addEventListener("change", updatePosition);
+      
+      // 切换高级设置显示/隐藏
+      function toggleAdvancedSettings() {
+        isExpanded = !isExpanded;
+        if (isExpanded) {
+          advancedSettings.classList.add('expanded');
+          toggleIcon.classList.add('expanded');
+        } else {
+          advancedSettings.classList.remove('expanded');
+          toggleIcon.classList.remove('expanded');
+        }
+      }
+      
+      function initSettings() {
+        isExpanded = false;
+        advancedSettings.classList.remove('expanded');
+        toggleIcon.classList.remove('expanded');
+      }
+      
+      // 绑定点击事件
+      advancedToggle.addEventListener('click', toggleAdvancedSettings);
+      
+      // 表单提交处理
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var seqStr = document.getElementById("amiibo").value.trim();
+        var interval = 12;
+        var maxLimit = parseInt(document.getElementById("max").value, 10) || 350000;
+        var amiiboHi = parseInt(document.getElementById("amiibo_hi").value, 10) ? true : false;
+
+        positionCurrent.value = "";
+        positionCurrent.classList.remove("error", "success");
+        positionCurrentAmiibo = ""
+
+        if (!seqStr) {
+          positionCurrent.classList.add("error");
+          return;
+        }
+
+        btn.disabled = true;
+        positionCurrent.value = "...";
+
+        setTimeout(function () {
+          try {
+            config_limit_set(maxLimit);
+            amiibo_set_hi(amiiboHi);
+            rand_init_seed();
+
+            var lines = test_match_amiibo_seq(seqStr, interval);
+
+            if (lines.length > 1) {
+              if(isEn()) {
+                positionCurrent.value = "" + lines.length + " results, need to add more amiibo sequence";
+              } else {
+                positionCurrent.value = "" + lines.length + "个结果，需要增加amiibo序列来消重";
+              }
+              positionCurrent.classList.add("error");
+            } else if (lines.length === 1) {
+              positionCurrent.value = lines[0];
+              positionCurrent.classList.add("success");
+
+              seq_str = seqStr.replace(/，/g, ",");
+              var amiibos = seq_str.split(",").map(function (s) {
+                return s.trim();
+              }).filter(Boolean);
+              positionCurrentAmiibo = amiibos[amiibos.length-1];
+            } else {
+              if(isEn()) {
+                positionCurrent.value = "Random is out of control, terminate game process and restart";
+              } else {
+                positionCurrent.value = "随机数已失控，只能大退重开";
+              }
+              positionCurrent.classList.add("error");
+            }
+          } catch (err) {
+            positionCurrent.value = err.message || String(err);
+            positionCurrent.classList.add("error");
+          }
+          updatePosition();
+          btn.disabled = false;
+        }, 10);
+      });
+      
+      window.addEventListener('DOMContentLoaded', initSettings);
+      initSettings();
+    })();
+  </script>
+</body>
+</html>
