@@ -624,14 +624,16 @@ function match_weapon(seqs) {
         break;
       }
 
-      var tagName = tag_by_score(v4);
+      var tagName = tag_by_score(v4).toLowerCase();
       var tagItem = tag_by_name(seq.tag);
-      if (tagName.toLowerCase() !== seq.tag.toLowerCase() &&
-          tagItem.short_name.toLowerCase() !== seq.tag.toLowerCase() &&
-          tagItem.en_name.toLowerCase() !== seq.tag.toLowerCase()) {
+      if( tagItem.short_name.toLowerCase() !== tagName &&
+          tagItem.en_name.toLowerCase() !== tagName &&
+          tagItem.name.toLowerCase() !== tagName) {
         allMatch = false;
         break;
       }
+
+      //console.log(seq.name, seq.tag, tagItem, tagName)
 
       // 满孔检查（可选条件）
       var maxSlots = 0;
