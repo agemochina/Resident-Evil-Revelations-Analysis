@@ -577,6 +577,7 @@ author: agemo@163.com
                 for(var pos=base;;) {
                   pos = find_weapon_position_after(pos+12, w.name);
                   if (pos == null) {
+                    results.push(displayName + " 本局无法对齐，差量无法被4整除");
                     break;
                   }
                   var posAlign = pos;
@@ -600,6 +601,7 @@ author: agemo@163.com
               //console.log("find pos: ", pos+12)
               pos = find_weapon_position_after(pos+12, weapon);
               if (pos == null) {
+                alignTips.textContent = "本局无法对齐，差量无法被4整除";
                 break;
               }
               var posAlign = pos;
