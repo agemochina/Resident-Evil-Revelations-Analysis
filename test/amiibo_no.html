@@ -363,10 +363,10 @@ author: agemo@163.com
       </div>
       
       <div class="form-group" style="position: relative;">
-        <label for="amiibo" class="i18n" data-zh="输入逗号分隔的武器序列" data-en="input comma-separated weapon sequence"></label>
-        <a onclick="amiibo_help()">(help?)</a>
+        <label for="weapons" class="i18n" data-zh="输入逗号分隔的武器序列" data-en="input comma-separated weapon sequence"></label>
+        <a onclick="weapons_help()">(help?)</a>
         <div class="input-with-button">
-          <input type="text" id="amiibo" name="amiibo" placeholder="武器-标签-是否蓝底,..." value="" />
+          <input type="text" id="weapons" name="weapons" placeholder="武器-标签-是否蓝底,..." value="L.Hawk-稳-0,Python-稀有-1,Hydra-无-1" />
           <button type="button" id="addWeaponBtn" class="add-weapon-btn">+</button>
           <button type="submit" id="btn">🔍︎</button>
         </div>
@@ -508,7 +508,7 @@ author: agemo@163.com
       return document.querySelector('.lang-option.active')?.dataset.lang === 'en';
     }
 
-    function amiibo_help() {
+    function weapons_help() {
       var modal = document.getElementById("helpModal");
       var body = document.getElementById("helpModalBody");
       var title = document.getElementById("helpModalTitle");
@@ -524,8 +524,8 @@ author: agemo@163.com
       } else {
         title.textContent = "帮助";
         content = "输入以逗号分隔的序列，格式：武器-标签-是否蓝底,...\n"
-          + "示例：M40A1-短-0,MP5-装填-0\n\n"
-          + "是否蓝底：0 = 无蓝底稀有，1 = 有蓝底稀有\n\n"
+          + "是否蓝底：0=否   1=是\n\n"
+          + "示例：M40A1-短-0,MP5-装填-0\n"
           + "武器表(不区分大小写)：\n" + weapon_name_table_str()
           + "\n标签表(不区分大小写)：\n" + tag_name_table_str();
       }
@@ -535,10 +535,10 @@ author: agemo@163.com
 
       modal.classList.add("active");
     }
+
     (function () {
       var form = document.getElementById("form");
       var positionCurrent = document.getElementById("positionCurrent");
-      var positionCurrentAmiibo = "";
       var btn = document.getElementById("btn");
       var advancedToggle = document.getElementById("advancedToggle");
       var advancedSettings = document.getElementById("advancedSettings");
@@ -564,63 +564,36 @@ author: agemo@163.com
         var base = null;
         var num = parseInt(outVal, 10);
         if (!isNaN(num) && String(num) === outVal) base = num;
-
         if (base == null || isNaN(base)) return;
-        try {
-          if (weapon === "-") {
-            // 任意武器：计算所有武器的上下对次数
-            var results = [];
-            for (var i = 0; i < weapon_table.length; i++) {
-              var w = weapon_table[i];
-              var displayName = isEn() ? w.rare_en : w.rare_cn;
 
-                for(var pos=base;;) {
-                  pos = find_weapon_position_after(pos+12, w.name);
-                  if (pos == null) {
-                    results.push(displayName + " 本局无法对齐，差量无法被4整除");
-                    break;
-                  }
-                  var posAlign = pos;
-                  var diff = posAlign - base;
-                  if ((diff % 4)!=0) {
-                    continue;
-                  }
-                  results.push(displayName + "(" + pos+  ")" + ": " + (diff / 4) + " 次");
-                  break;
-                }
 
-            }
-            if (results.length > 0) {
-              alignTips.textContent = results.join("\n");
+        var results = [];
+        // 4=生成当前，4=弹窗，4=按A领取
+        // 所以，已经弹窗时为+8，对齐光标后观测为目标-4（领取之前）
+        const WEAPON_IV = 12;
+        if (weapon === "-") {
+          for (var i = 0; i < weapon_table.length; i++) {
+            var w = weapon_table[i];
+            var displayName = isEn() ? w.rare_en : w.rare_cn;
+            var pos = align_weapon(w.name, base+WEAPON_IV);
+            if(pos < 0) {
+              results.push(displayName + " 本局无法对齐");
             } else {
-              alignTips.textContent = "未找到匹配";
-            }
-          } else {
-            // 单个武器
-            for(var pos=base;;) {
-              //console.log("find pos: ", pos+12)
-              pos = find_weapon_position_after(pos+12, weapon);
-              if (pos == null) {
-                alignTips.textContent = "本局无法对齐，差量无法被4整除";
-                break;
-              }
-              var posAlign = pos;
-              var diff = posAlign - base;
-              if ((diff % 4)!=0) {
-                console.log("skip pos: ", posAlign)
-                continue;
-              }
-              positionTarget.value = pos != null ? String(pos) : "—";
-              lines = [
-                "目标: "+  pos+  " 按上下对 " + (diff / 4) + " 次",
-              ];
-              alignTips.textContent = lines.join("\n");
-              break;
+              var diff = pos - base - WEAPON_IV;
+              results.push(displayName + "(" + pos + "): " + (diff / 4) + " 次");
             }
           }
-        } catch (e) {
-          positionTarget.value = "—";
+        } else {
+          var pos = align_weapon(weapon, base+WEAPON_IV)
+          if(pos < 0) {
+            results.push("本局无法对齐");
+          } else {
+            var diff = pos - base - WEAPON_IV;
+            results.push((diff / 4) + " 次");
+            positionTarget.value = pos
+          }
         }
+        alignTips.textContent = results.join("\n");
       }
 
       targetWeaponSelect.addEventListener("change", updatePosition);
@@ -699,7 +672,7 @@ author: agemo@163.com
         var weapon = weaponSelect.value;
         var tag = tagSelect.value;
         var blueBg = document.querySelector('input[name="blueBg"]:checked').value;
-        var amiiboInput = document.getElementById("amiibo");
+        var amiiboInput = document.getElementById("weapons");
         var currentVal = amiiboInput.value.trim();
 
         // 构建格式化的武器字符串
@@ -729,62 +702,53 @@ author: agemo@163.com
       // 初始化武器选择器
       initWeaponSelectors();
 
-      // 表单提交处理
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        var seqStr = document.getElementById("amiibo").value.trim();
+      function submit_error(msg="") {
+        positionCurrent.classList.add("error");
+        if(msg) {
+          positionCurrent.value = msg;
+        }
+      }
+
+      function submit_ok(msg) {
+        positionCurrent.classList.add("success");
+        if(msg) {
+          positionCurrent.value = msg;
+        }
+      }
+
+      function on_submit() {
+        var seqStr = document.getElementById("weapons").value.trim();
         var maxLimit = parseInt(document.getElementById("max").value, 10) || 350000;
 
         positionCurrent.value = "";
         positionCurrent.classList.remove("error", "success");
-        positionCurrentAmiibo = ""
-
+        
         if (!seqStr) {
-          positionCurrent.classList.add("error");
-          return;
+          return submit_error();
         }
 
-        btn.disabled = true;
-        positionCurrent.value = "...";
+        config_limit_set(maxLimit);
+        rand_init_seed();
 
-        setTimeout(function () {
-          try {
-            config_limit_set(maxLimit);
-            rand_init_seed();
+        var lines = test_match_weapon(seqStr);
+        if (lines.length === 0) {
+          var msg = isEn()? "No match found": "未找到匹配";
+          submit_error(msg);
+        } else if (lines.length > 1) {
+          var msg = isEn()? "multiple results": "多个搜索结果";
+          msg += " : " + lines.length;
+          submit_error(msg);
+        } else {
+          submit_ok(lines[0]);
+        }
 
-            var lines = test_match_weapon(seqStr);
+        updatePosition();
+      }
 
-            if (lines.length === 0) {
-              if(isEn()) {
-                positionCurrent.value = "No match found";
-              } else {
-                positionCurrent.value = "未找到匹配";
-              }
-              positionCurrent.classList.add("error");
-            } else {
-              positionCurrent.value = lines[0];
-              positionCurrent.classList.add("success");
-
-              // 获取最后一个武器名称用于显示
-              var seq_str = seqStr.replace(/，/g, ",");
-              var weapons = seq_str.split(",").map(function (s) {
-                return s.trim();
-              }).filter(Boolean);
-              var lastWeapon = weapons[weapons.length - 1];
-              if (lastWeapon) {
-                var parsedValues = lastWeapon.split('-');
-                if (parsedValues.length >= 1) {
-                  positionCurrentAmiibo = parsedValues[0];
-                }
-              }
-            }
-          } catch (err) {
-            positionCurrent.value = err.message || String(err);
-            positionCurrent.classList.add("error");
-          }
-          updatePosition();
-          btn.disabled = false;
-        }, 10);
+      // 表单提交处理
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        on_submit();        
       });
       
       window.addEventListener('DOMContentLoaded', initSettings);
