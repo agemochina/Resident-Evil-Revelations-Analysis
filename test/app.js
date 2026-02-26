@@ -53,7 +53,6 @@ function rand_uint32() {
 }
 
 function rand_skip(n) {
-  n = n || 1;
   for (var i = 0; i < n; i++) rand_uint32();
 }
 
@@ -192,17 +191,19 @@ function tag_name_table_str() {
 }
 
 /**
- * Find smallest position > startPos+300 where lv51_fullslot_rare yields weaponName.
+ * Find smallest position >= startPos where lv51_fullslot_rare yields weaponName.
  * Logic from test_weapon.list_lv51_fullslot_rare.
  * @returns {number|null} position or null if not found
  */
 function find_weapon_position_after(startPos, weaponName) {
+  // 本函数返回值x从0开始，即含义为跳过x个随机数之后的武器
+  // 与 list_lv51_fullslot_rare() 结果一致。
+  // startPos是指从跳过多少个随机数之后开始搜索
   var MAX_LIMIT = config_limit_get();
-  var minI = startPos;
-  if (minI >= MAX_LIMIT) return null;
+  if (startPos >= MAX_LIMIT) return null;
   rand_init_seed();
-  rand_skip(minI);
-  for (var i = minI; i < MAX_LIMIT; i++) {
+  rand_skip(startPos);
+  for (var i = startPos; i < MAX_LIMIT; i++) {
     var state = rand_backup_state();
     var v1 = rand_float_n(100.0);
     var v2 = rand_float_n(100.0);
@@ -539,11 +540,15 @@ function test_match_amiibo_seq(seq_str, interval, output) {
 function test_match_weapon(values) {
   var weapon_list = values.replace(/，/g, ",").split(",");
   var seqs = [];
-  if(weapon_list.length<3) {
-    throw new Error("weapon list must at least 3 items (got " + weapon_list.length + ").");
-  }
 
   for (var i = 0; i < weapon_list.length; i++) {
+    if(seqs.length) {
+      // 两个武器id间隔 48111,48123(p90) = 12, 算上本身武器属性消耗的4个，那就是间隔8
+      for (var skip = 0; skip < 8; skip++) {
+        seqs.push(0);
+      }
+    }
+
     var weapon = weapon_list[i].trim();
     var parsedValues = weapon.split("-");
     var name, tag, bw;
@@ -570,14 +575,9 @@ function test_match_weapon(values) {
       bw: parseInt(bw, 10),
       maxslots: -1 // 任意满孔状态
     });
-
-    // 两个武器id间隔 48111,48123(p90) = 12, 算上本身武器属性消耗的4个，那就是间隔8
-    for (var skip = 0; skip < 8; skip++) {
-      seqs.push(0);
-    }
   }
 
-  return match_weapon(seqs);
+  return match_weapon(seqs, 0, false);
 }
 
 /**
@@ -585,16 +585,20 @@ function test_match_weapon(values) {
  * @param {Array} seqs - 武器观察序列
  * @returns {string[]} 返回匹配结果
  */
-function match_weapon(seqs) {
+function match_weapon(seqs, startPos=0, findFirst=false) {
   var MAX_LIMIT = config_limit_get();
   var results = [];
 
-  for (var i = 0; i < MAX_LIMIT; i++) {
+  rand_init_seed();
+  rand_skip(startPos);
+  
+
+  for (var i = startPos; i < MAX_LIMIT; i++) {
     var state = rand_backup_state();
 
     var allMatch = true;
     var scores = "";
-    var offset = 1;
+    var offset = 0;
     var lastWeaponOffset = -1;
 
     for (var j = 0; j < seqs.length; j++) {
@@ -661,11 +665,33 @@ function match_weapon(seqs) {
     if (allMatch) {
       // 只显示最后的位置
       results.push(lastWeaponOffset);
+      //console.log("scores", scores)
+      if(findFirst) {
+        break;
+      }
     }
 
     rand_restore_state(state);
     rand_uint32();
   }
 
+  //console.log("match_weapon", results)
   return results;
+}
+
+
+function align_weapon(weapon_name, base) {
+  var seqs = [{ name: weapon_name, tag: "Rare", bw: 1, maxslots: 1 }];
+  var matches = match_weapon(seqs, base, false);
+  
+  for (var k = 0; k < matches.length; k++) {
+    var pos = matches[k];
+    var diff = pos - base;
+    if ((diff % 4) !== 0) {
+      console.log("align_weapon skip", weapon_name, pos, diff/4);
+      continue;
+    }
+    return pos;
+  }
+  return -1;
 }
