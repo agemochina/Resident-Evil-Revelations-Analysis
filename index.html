@@ -118,6 +118,86 @@ author: agemo@163.com
       line-height: 1.4;       /* 设置合适的行高 */
       min-height: 2.8rem;     /* 最小高度，约2行 */
     }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      max-width: 90%;
+      max-height: 80%;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .modal-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 2rem;
+      height: 2rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close:hover {
+      color: #000;
+    }
+    .modal-title {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #000;
+      padding-right: 2rem;
+    }
+    .modal-body {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      word-wrap: break-word;
+      color: #000;
+    }
+    .modal-body table {
+      margin-top: 0.5rem;
+      border: 1px solid #999;
+      min-width: 100%;
+      border-collapse: collapse;
+    }
+    .modal-body th {
+      background: #f5f5f5;
+      font-weight: 600;
+      padding: 0.5rem;
+      text-align: left;
+      border: 1px solid #999;
+    }
+    .modal-body td {
+      padding: 0.4rem 0.5rem;
+      border: 1px solid #999;
+      vertical-align: middle;
+    }
+    .modal-body tr:nth-child(even) {
+      background: #fafafa;
+    }
+    .modal-body tr:hover {
+      background: #f0f0f0;
+    }
     .row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
     .row .form-group { flex: 1; min-width: 120px; }
     .input-with-button {
@@ -246,27 +326,7 @@ author: agemo@163.com
   <div class="form-group" style="margin-top: 0.5rem;">
     <label for="target_weapon" class="i18n" data-zh="目标武器" data-en="Target Weapon"></label>
     <div class="row" style="align-items: flex-end;">
-      <select id="target_weapon" name="target_weapon" class="target-weapon-select">
-        <option value="M92F">启示者(Revelator)</option>
-        <option value="Government">独裁者(Dictator)</option>
-        <option value="G18">杀戮者(Slaughter)</option>
-        <option value="PC365">奇美拉(Chimaera)</option>
-        <option value="Python" selected>魔蛇(Serpent)</option>
-        <option value="L.Hawk">雷霆之鹰(ThunderRaptor)</option>
-        <option value="PaleRider">死神(Grim Reaper)</option>
-        <option value="MP5">掠夺者(Marauder)</option>
-        <option value="P-90">风暴之主(Lead Storm)</option>
-        <option value="AUG">毒针(Stinger)</option>
-        <option value="G36">侵略者(Aggressor)</option>
-        <option value="HighRoller">赌徒二世(HighRoller II)</option>
-        <option value="Windham">巨锤(Sledgehammer)</option>
-        <option value="M3">突击者(Raider)</option>
-        <option value="Hydra">地狱犬(Cerberus)</option>
-        <option value="Drake">蛇龙(Lindwurm)</option>
-        <option value="M40A1">野兔(Zaytsev)</option>
-        <option value="PSG1">潜行者(Prowler)</option>
-        <option value="Muramasa">零号(Zeroth)</option>
-      </select>
+      <select id="target_weapon" name="target_weapon" class="target-weapon-select"></select>
       <div class="form-group" style="margin-bottom: 0; margin-left: 0rem;">
         <input type="text" id="positionTarget" readonly placeholder="—" class="position-input" />
       </div>
@@ -275,6 +335,16 @@ author: agemo@163.com
   <div class="form-group" style="margin-top: 1rem;">
     <div id="alignTips" class="align-tips-box"></div>
   </div>
+
+  <!-- Help Modal -->
+  <div id="helpModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" id="helpModalClose">×</button>
+      <h3 class="modal-title" id="helpModalTitle">Help</h3>
+      <div class="modal-body" id="helpModalBody"></div>
+    </div>
+  </div>
+
   <script>
 /**
  * Author: agemo@163.com
@@ -331,7 +401,6 @@ function rand_uint32() {
 }
 
 function rand_skip(n) {
-  n = n || 1;
   for (var i = 0; i < n; i++) rand_uint32();
 }
 
@@ -370,26 +439,61 @@ function rand_float_n(n) {
 
 // ============== weapon (from weapon.py) ==============
 var weapon_table = [
-  { id: 0x80051000, rate: 8.0, name: "M92F" },
-  { id: 0x80051010, rate: 7.5, name: "Government" },
-  { id: 0x80051040, rate: 2.0, name: "G18" },
-  { id: 0x80051060, rate: 7.0, name: "PC365" },
-  { id: 0x80051100, rate: 5.0, name: "Python" },
-  { id: 0x80051110, rate: 3.0, name: "L.Hawk" },
-  { id: 0x80051120, rate: 1.5, name: "PaleRider" },
-  { id: 0x80051200, rate: 7.5, name: "MP5" },
-  { id: 0x80051210, rate: 6.0, name: "P-90" },
-  { id: 0x80051220, rate: 7.0, name: "AUG" },
-  { id: 0x80051230, rate: 7.5, name: "G36" },
-  { id: 0x80051250, rate: 2.0, name: "HighRoller" },
-  { id: 0x80051300, rate: 8.0, name: "Windham" },
-  { id: 0x80051310, rate: 7.5, name: "M3" },
-  { id: 0x80051320, rate: 2.0, name: "Hydra" },
-  { id: 0x80051330, rate: 1.5, name: "Drake" },
-  { id: 0x80051400, rate: 8.0, name: "M40A1" },
-  { id: 0x80051410, rate: 7.5, name: "PSG1" },
-  { id: 0x80051420, rate: 1.5, name: "Muramasa" }
+  { id: 0x80051000, rate: 8.0, name: "M92F", rare_cn: "启示者", rare_en: "Revelator" },
+  { id: 0x80051010, rate: 7.5, name: "Government", rare_cn: "独裁者", rare_en: "Dictator" },
+  { id: 0x80051040, rate: 2.0, name: "G18", rare_cn: "杀戮者", rare_en: "Slaughter" },
+  { id: 0x80051060, rate: 7.0, name: "PC365", rare_cn: "奇美拉", rare_en: "Chimaera" },
+  { id: 0x80051100, rate: 5.0, name: "Python", rare_cn: "魔蛇", rare_en: "Serpent" },
+  { id: 0x80051110, rate: 3.0, name: "L.Hawk", rare_cn: "雷霆之鹰", rare_en: "ThunderRaptor" },
+  { id: 0x80051120, rate: 1.5, name: "PaleRider", rare_cn: "死神", rare_en: "GrimReaper" },
+  { id: 0x80051200, rate: 7.5, name: "MP5", rare_cn: "掠夺者", rare_en: "Marauder" },
+  { id: 0x80051210, rate: 6.0, name: "P90", rare_cn: "风暴之主", rare_en: "LeadStorm" },
+  { id: 0x80051220, rate: 7.0, name: "AUG", rare_cn: "毒针", rare_en: "Stinger" },
+  { id: 0x80051230, rate: 7.5, name: "G36", rare_cn: "侵略者", rare_en: "Aggressor" },
+  { id: 0x80051250, rate: 2.0, name: "HighRoller", rare_cn: "赌徒二世", rare_en: "HighRollerII" },
+  { id: 0x80051300, rate: 8.0, name: "Windham", rare_cn: "巨锤", rare_en: "Sledgehammer" },
+  { id: 0x80051310, rate: 7.5, name: "M3", rare_cn: "突击者", rare_en: "Raider" },
+  { id: 0x80051320, rate: 2.0, name: "Hydra", rare_cn: "地狱犬", rare_en: "Cerberus" },
+  { id: 0x80051330, rate: 1.5, name: "Drake", rare_cn: "蛇龙", rare_en: "Lindwurm" },
+  { id: 0x80051400, rate: 8.0, name: "M40A1", rare_cn: "野兔", rare_en: "Zaytsev" },
+  { id: 0x80051410, rate: 7.5, name: "PSG1", rare_cn: "潜行者", rare_en: "Prowler" },
+  { id: 0x80051420, rate: 1.5, name: "Muramasa", rare_cn: "零号", rare_en: "Zeroth" }
 ];
+
+var tag_table = [
+  { id: 0,          rate: 50.0, short_name: "无", name: "无标签", en_name: "No" },
+  { id: 0x80090000, rate: 5.0, short_name: "短", name: "短射程", en_name: "ShortRange" },
+  { id: 0x80090001, rate: 5.0, short_name: "长", name: "长射程", en_name: "LongRange" },
+  { id: 0x80090002, rate: 5.0, short_name: "握", name: "轻松握力", en_name: "EasyGrip" },
+  { id: 0x80090003, rate: 5.0, short_name: "射速", name: "高速射击", en_name: "SpeedShot" },
+  { id: 0x80090004, rate: 5.0, short_name: "稳", name: "沉稳之手", en_name: "SteadyHand" },
+  { id: 0x80090005, rate: 5.0, short_name: "填弹", name: "高速填弹", en_name: "SpeedLoad" },
+  { id: 0x80090006, rate: 5.0, short_name: "音", name: "音速助攻", en_name: "SonicAssist" },
+  { id: 0x80090007, rate: 6.0, short_name: "轻", name: "轻盈", en_name: "LightWeight" },
+  { id: 0x80090008, rate: 2.5, short_name: "音+", name: "音速助攻+", en_name: "SonicAssist+" },
+  { id: 0x80090009, rate: 2.5, short_name: "短+", name: "短射程+", en_name: "ShortRange+" },
+  { id: 0x8009000A, rate: 2.5, short_name: "长+", name: "长射程+", en_name: "LongRange+" },
+  { id: 0x8009000B, rate: 1.5, short_name: "稀有", name: "异名", en_name: "Rare" }
+];
+
+function weapon_name_table_str() {
+  var ret = "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse; width: 100%;'><tr><th>武器名称 / Weapon Name (不区分大小写)</th></tr>";
+  for (var i = 0; i < weapon_table.length; i++) {
+    ret += "<tr><td>" + weapon_table[i].name + "</td></tr>";
+  }
+  ret += "</table>";
+  return ret;
+}
+
+function weapon_by_name(name) {
+  var lowerName = name.toLowerCase();
+  for (var i = 0; i < weapon_table.length; i++) {
+    if (weapon_table[i].name.toLowerCase() === lowerName) {
+      return weapon_table[i];
+    }
+  }
+  return null;
+}
 
 function weapon_by_score(score) {
   var cumulative_weight = 0;
@@ -402,18 +506,52 @@ function weapon_by_score(score) {
   throw new Error("invalid score " + score);
 }
 
+function tag_by_name(name) {
+  var lowerName = name.toLowerCase();
+  for (var i = 0; i < tag_table.length; i++) {
+    if (tag_table[i].name.toLowerCase() === lowerName ||
+        tag_table[i].en_name.toLowerCase() === lowerName ||
+        tag_table[i].short_name.toLowerCase() === lowerName) {
+      return tag_table[i];
+    }
+  }
+  return null;
+}
+
+function tag_by_score(score) {
+  var cumulative_weight = 0;
+  for (var i = 0; i < tag_table.length; i++) {
+    cumulative_weight += tag_table[i].rate;
+    if (cumulative_weight > score) {
+      return tag_table[i].name;
+    }
+  }
+  throw new Error("invalid score " + score);
+}
+
+function tag_name_table_str() {
+  var ret = "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse; width: 100%;'><tr><th>英文名 / English</th><th>中文名 / Chinese</th><th>简称 / Short</th></tr>";
+  for (var i = 0; i < tag_table.length; i++) {
+    ret += "<tr><td>" + tag_table[i].en_name + "</td><td>" + tag_table[i].name + "</td><td>" + tag_table[i].short_name + "</td></tr>";
+  }
+  ret += "</table>";
+  return ret;
+}
+
 /**
- * Find smallest position > startPos+300 where lv51_fullslot_rare yields weaponName.
+ * Find smallest position >= startPos where lv51_fullslot_rare yields weaponName.
  * Logic from test_weapon.list_lv51_fullslot_rare.
  * @returns {number|null} position or null if not found
  */
 function find_weapon_position_after(startPos, weaponName) {
+  // 本函数返回值x从0开始，即含义为跳过x个随机数之后的武器
+  // 与 list_lv51_fullslot_rare() 结果一致。
+  // startPos是指从跳过多少个随机数之后开始搜索
   var MAX_LIMIT = config_limit_get();
-  var minI = startPos + 301;
-  if (minI >= MAX_LIMIT) return null;
+  if (startPos >= MAX_LIMIT) return null;
   rand_init_seed();
-  rand_skip(minI);
-  for (var i = minI; i < MAX_LIMIT; i++) {
+  rand_skip(startPos);
+  for (var i = startPos; i < MAX_LIMIT; i++) {
     var state = rand_backup_state();
     var v1 = rand_float_n(100.0);
     var v2 = rand_float_n(100.0);
@@ -451,8 +589,8 @@ function item_name_table_str() {
     ret += item_name_table[i].short_name + " = " + item_name_table[i].name + " = " + item_name_table[i].en_name + "\n";
   }
   return ret;
-
 }
+
 var item_table_hi = [
   { id: 0x80040101, quantity: 2, weight: 2 },
   { id: 0x80040200, quantity: 18, weight: 2 },
@@ -741,6 +879,170 @@ function test_match_amiibo_seq(seq_str, interval, output) {
     return lines;
   }
 }
+
+/**
+ * 匹配武器序列（参考 test_weapon.py 中的 test_match_weapon）
+ * @param {string} values - 逗号分隔，如 "M40A1-短-0,MP5-装填-0"（支持全角逗号）
+ * @returns {string[]} 返回匹配结果
+ */
+function test_match_weapon(values) {
+  var weapon_list = values.replace(/，/g, ",").split(",");
+  var seqs = [];
+
+  for (var i = 0; i < weapon_list.length; i++) {
+    if(seqs.length) {
+      // 两个武器id间隔 48111,48123(p90) = 12, 算上本身武器属性消耗的4个，那就是间隔8
+      for (var skip = 0; skip < 8; skip++) {
+        seqs.push(0);
+      }
+    }
+
+    var weapon = weapon_list[i].trim();
+    var parsedValues = weapon.split("-");
+    var name, tag, bw;
+
+    if (parsedValues.length === 3) {
+      name = parsedValues[0].trim();
+      tag = parsedValues[1].trim();
+      bw = parsedValues[2].trim();
+    } else {
+      throw new Error("weapon invalid: " + weapon);
+    }
+
+    // 验证名称
+    if (!weapon_by_name(name)) {
+      throw new Error("name invalid: " + name);
+    }
+    if (!tag_by_name(tag)) {
+      throw new Error("tag invalid: " + tag);
+    }
+
+    seqs.push({
+      name: name,
+      tag: tag,
+      bw: parseInt(bw, 10),
+      maxslots: -1 // 任意满孔状态
+    });
+  }
+
+  return match_weapon(seqs, 0, false);
+}
+
+/**
+ * 匹配武器序列（参考 test_weapon.py 中的 match_weapon）
+ * @param {Array} seqs - 武器观察序列
+ * @returns {string[]} 返回匹配结果
+ */
+function match_weapon(seqs, startPos=0, findFirst=false) {
+  var MAX_LIMIT = config_limit_get();
+  var results = [];
+
+  rand_init_seed();
+  rand_skip(startPos);
+  
+
+  for (var i = startPos; i < MAX_LIMIT; i++) {
+    var state = rand_backup_state();
+
+    var allMatch = true;
+    var scores = "";
+    var offset = 0;
+    var lastWeaponOffset = -1;
+
+    for (var j = 0; j < seqs.length; j++) {
+      var seq = seqs[j];
+
+      if (typeof seq === "number") {
+        rand_uint32();
+        offset = offset + 1;
+        continue;
+      }
+
+      // 生成4个随机值
+      var v1 = rand_float_n(100.0);
+      var v2 = rand_float_n(100.0);
+      var v3 = rand_int_range(0, 99);
+      var v4 = rand_float_n(100.0);
+
+      var name = weapon_by_score(v1);
+
+      var bw = 0;
+      if (v2 >= 83.57) {
+        bw = 1;
+      }
+
+      if (name.toLowerCase() !== seq.name.toLowerCase() || bw !== seq.bw) {
+        allMatch = false;
+        break;
+      }
+
+      var tagName = tag_by_score(v4).toLowerCase();
+      var tagItem = tag_by_name(seq.tag);
+      if( tagItem.short_name.toLowerCase() !== tagName &&
+          tagItem.en_name.toLowerCase() !== tagName &&
+          tagItem.name.toLowerCase() !== tagName) {
+        allMatch = false;
+        break;
+      }
+
+      //console.log(seq.name, seq.tag, tagItem, tagName)
+
+      // 满孔检查（可选条件）
+      var maxSlots = 0;
+      if (v3 >= 50) {
+        maxSlots = 1;
+      }
+
+      if (seq.maxslots >= 0 && maxSlots !== seq.maxslots) {
+        allMatch = false;
+        break;
+      }
+
+      if (scores) {
+        scores += " | ";
+      }
+      lastWeaponOffset = i + offset;
+      scores += "@" + (i + offset) + " " +
+                Math.round(v1 * 10) / 10 + " " +
+                Math.round(v2 * 10) / 10 + " " +
+                v3 + " " +
+                Math.round(v4 * 10) / 10;
+      offset = offset + 4;
+    }
+
+    if (allMatch) {
+      // 只显示最后的位置
+      results.push(lastWeaponOffset);
+      //console.log("scores", scores)
+      if(findFirst) {
+        break;
+      }
+    }
+
+    rand_restore_state(state);
+    rand_uint32();
+  }
+
+  //console.log("match_weapon", results)
+  return results;
+}
+
+
+function align_weapon(weapon_name, base) {
+  var seqs = [{ name: weapon_name, tag: "Rare", bw: 1, maxslots: 1 }];
+  var matches = match_weapon(seqs, base, false);
+  
+  for (var k = 0; k < matches.length; k++) {
+    var pos = matches[k];
+    var diff = pos - base;
+    if ((diff % 4) !== 0) {
+      console.log("align_weapon skip", weapon_name, pos, diff/4);
+      continue;
+    }
+    return pos;
+  }
+  return -1;
+}
 </script>
   <script>
     function switchLanguage(lang) {
@@ -777,19 +1079,52 @@ function test_match_amiibo_seq(seq_str, interval, output) {
       return document.querySelector('.lang-option.active')?.dataset.lang === 'en';
     }
 
+    // 模态框关闭功能
+    var helpModal = document.getElementById("helpModal");
+    var helpModalClose = document.getElementById("helpModalClose");
+
+    // 点击关闭按钮
+    helpModalClose.addEventListener("click", function() {
+      helpModal.classList.remove("active");
+    });
+
+    // 点击外部区域关闭
+    helpModal.addEventListener("click", function(e) {
+      if (e.target === helpModal) {
+        helpModal.classList.remove("active");
+      }
+    });
+
+    // ESC键关闭
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && helpModal.classList.contains("active")) {
+        helpModal.classList.remove("active");
+      }
+    });
+
     function amiibo_help() {
+      var modal = document.getElementById("helpModal");
+      var body = document.getElementById("helpModalBody");
+      var title = document.getElementById("helpModalTitle");
+
+      var content = "";
       if (isEn()) {
-        alert("Input comma-separated sequence, format: type1quantity1, type2quantity2,... Example:\n"
+        title.textContent = "Help";
+        content = "Input comma-separated sequence, format: type1quantity1, type2quantity2,... Example:\n"
           + "bow4,handgun30,bow4,machine70,magnum8\n\n"
-          + "Supported types: abbreviation, Chinese, English:\n" + item_name_table_str()
-        );
+          + "Supported types: abbreviation, Chinese, English:\n" + item_name_table_str();
       } else {
-          alert("输入以逗号分隔的序列，类型1数量1,类型2数量2,... 示例:\n"
+        title.textContent = "帮助";
+        content = "输入以逗号分隔的序列，类型1数量1,类型2数量2,... 示例:\n"
           + "bow4,sq30,bow4,jq70,ml8\n"
           + "bow4,手枪30,bow4,机枪70,麦林8\n\n"
-          + "类型支持 缩写、中文、英文：\n" + item_name_table_str() 
-        );
+          + "类型支持 缩写、中文、英文：\n" + item_name_table_str();
       }
+
+      // 将\n转换为换行用于纯文本部分，保留HTML标签
+      body.innerHTML = content.replace(/\n/g, "<br>");
+
+      modal.classList.add("active");
     }
     (function () {
       var form = document.getElementById("form");
@@ -821,7 +1156,7 @@ function test_match_amiibo_seq(seq_str, interval, output) {
         }
         if (base == null || isNaN(base)) return;
         try {
-          var pos = find_weapon_position_after(base, weapon);
+          var pos = find_weapon_position_after(base+301, weapon);
           positionTarget.value = pos != null ? String(pos) : "—";
           if (pos != null) {
             var posAlign = pos - 147;
@@ -907,7 +1242,24 @@ function test_match_amiibo_seq(seq_str, interval, output) {
       
       // 绑定点击事件
       advancedToggle.addEventListener('click', toggleAdvancedSettings);
-      
+
+      // 初始化目标武器下拉框
+      function initTargetWeaponSelect() {
+        var targetWeaponSelect = document.getElementById("target_weapon");
+        if (!targetWeaponSelect) return;
+
+        // 填充武器选项
+        weapon_table.forEach(function(weapon) {
+          var option = document.createElement("option");
+          option.value = weapon.name;
+          option.textContent = weapon.rare_cn + "(" + weapon.rare_en + ")";
+          if (weapon.name === "Python") {
+            option.selected = true;
+          }
+          targetWeaponSelect.appendChild(option);
+        });
+      }
+
       // 表单提交处理
       form.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -968,7 +1320,10 @@ function test_match_amiibo_seq(seq_str, interval, output) {
           btn.disabled = false;
         }, 10);
       });
-      
+
+      // 初始化目标武器下拉框
+      initTargetWeaponSelect();
+
       window.addEventListener('DOMContentLoaded', initSettings);
       initSettings();
     })();
