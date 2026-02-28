@@ -309,8 +309,8 @@ author: agemo@163.com
       </div>
       
       <div class="form-group">
-        <label for="amiibo" class="i18n" data-zh="输入逗号分隔的Amiibo序列" data-en="input comma-separated amiibo sequence"></label>
-        <a onclick="amiibo_help()">(help?)</a>
+        <label for="amiibo" class="i18n" data-zh="连续扫描多次amiibo获得道具清单：" data-en="input comma-separated amiibo supplies sequence"></label>
+        <a onclick="amiibo_help()" class="i18n" data-zh="(输入格式帮助)" data-en="(help)">help</a>
         <div class="input-with-button">
           <input type="text" id="amiibo" name="amiibo" placeholder="" value="" />
           <button type="submit" id="btn">🔍︎</button>
@@ -319,7 +319,7 @@ author: agemo@163.com
     </form>
   </div>
   <div class="form-group" style="margin-top: 1.25rem;">
-    <label for="positionCurrent" class="i18n" data-zh="测量的随机数位置" data-en="current rand position"></label>
+    <label for="positionCurrent" class="i18n" data-zh="测量出的随机数位置" data-en="current rand position"></label>
     <br>
     <input type="text" id="positionCurrent" readonly placeholder="—" />
   </div>
@@ -857,6 +857,7 @@ function seqs_append_amiibo(seqs, interval, amiibos) {
  * @returns {string[]} 若未传 output，返回所有匹配行
  */
 function test_match_amiibo_seq(seq_str, interval, output) {
+  seq_str = seq_str.replaceAll(" ","");
   seq_str = seq_str.replace(/，/g, ",");
   var amiibos = seq_str.split(",").map(function (s) {
     return s.trim();
@@ -1110,12 +1111,14 @@ function align_weapon(weapon_name, base) {
       var content = "";
       if (isEn()) {
         title.textContent = "Help";
-        content = "Input comma-separated sequence, format: type1quantity1, type2quantity2,... Example:\n"
+        content = "Input comma-separated sequence, format: type1quantity1, type2quantity2,...\n\n"
+          + "Example:\n"
           + "bow4,handgun30,bow4,machine70,magnum8\n\n"
           + "Supported types: abbreviation, Chinese, English:\n" + item_name_table_str();
       } else {
         title.textContent = "帮助";
-        content = "输入以逗号分隔的序列，类型1数量1,类型2数量2,... 示例:\n"
+        content = "输入以逗号分隔的清单，类型1数量1,类型2数量2,...\n\n"
+          + "示例:\n"
           + "bow4,sq30,bow4,jq70,ml8\n"
           + "bow4,手枪30,bow4,机枪70,麦林8\n\n"
           + "类型支持 缩写、中文、英文：\n" + item_name_table_str();
