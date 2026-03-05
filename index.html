@@ -276,6 +276,9 @@ author: agemo@163.com
       color: #fff;
       border-color: #333;
     }
+    .author-link {
+      font-size: 0.875rem;
+    }
   </style>
 </head>
 <body>
@@ -286,7 +289,7 @@ author: agemo@163.com
     </div>    
     <div class="form-group" style="text-align: center;">
       <div class="i18n" data-zh="生化危机启示录1-稀有武器预测器(Switch)" data-en="Resident Evil Revelations1 - Rare Weapon Predictor (Switch)"></div>
-      <a href="https://github.com/agemochina/Resident-Evil-Revelations-Analysis/" target="_blank"><span class="i18n" data-zh="使用说明/Help" data-en="Help / Guide">使用说明/Help</span></a>
+      <a href="https://b23.tv/PHB8fli" target="_blank" class="author-link"><span class="i18n" data-zh="开发者: 霾城群众@bilibili" data-en="Author: 霾城群众@bilibili">使用说明/Help</span></a>
     </div>
     <form id="form">
       <div class="advanced-toggle" id="advancedToggle">
@@ -536,6 +539,221 @@ function tag_name_table_str() {
   }
   ret += "</table>";
   return ret;
+}
+
+function weapon_by_id(id) {
+  for (var i = 0; i < weapon_table.length; i++) {
+    if (weapon_table[i].id === id) {
+      return weapon_table[i];
+    }
+  }
+  return null;
+}
+
+// store 武器/标签表（与 weapon.py store_weapon_table / store_tag_table 一致）
+var store_weapon_table = [
+  { id: 0x80051000, rate: 10.0 },
+  { id: 0x80051010, rate: 7.0 },
+  { id: 0x80051040, rate: 1.0 },
+  { id: 0x80051060, rate: 6.0 },
+  { id: 0x80051100, rate: 4.0 },
+  { id: 0x80051110, rate: 3.0 },
+  { id: 0x80051120, rate: 1.0 },
+  { id: 0x80051200, rate: 9.0 },
+  { id: 0x80051210, rate: 6.0 },
+  { id: 0x80051220, rate: 6.0 },
+  { id: 0x80051230, rate: 9.0 },
+  { id: 0x80051250, rate: 2.0 },
+  { id: 0x80051300, rate: 10.0 },
+  { id: 0x80051310, rate: 7.0 },
+  { id: 0x80051320, rate: 2.0 },
+  { id: 0x80051330, rate: 0.0 },
+  { id: 0x80051400, rate: 10.0 },
+  { id: 0x80051410, rate: 7.0 },
+  { id: 0x80051420, rate: 0.0 }
+];
+
+var store_tag_table = [
+  { id: 0,          rate: 80.0, short_name: "无", name: "无标签", en_name: "No" },
+  { id: 0x80090000, rate: 1.0,  short_name: "短", name: "短射程", en_name: "ShortRange" },
+  { id: 0x80090001, rate: 1.0,  short_name: "长", name: "长射程", en_name: "LongRange" },
+  { id: 0x80090002, rate: 3.5,  short_name: "握", name: "轻松握力", en_name: "EasyGrip" },
+  { id: 0x80090003, rate: 2.5,  short_name: "射速", name: "高速射击", en_name: "SpeedShot" },
+  { id: 0x80090004, rate: 2.5,  short_name: "稳", name: "沉稳之手", en_name: "SteadyHand" },
+  { id: 0x80090005, rate: 2.5,  short_name: "填弹", name: "高速填弹", en_name: "SpeedLoad" },
+  { id: 0x80090006, rate: 1.5,  short_name: "音", name: "音速助攻", en_name: "SonicAssist" },
+  { id: 0x80090007, rate: 2.5,  short_name: "轻", name: "轻盈", en_name: "LightWeight" },
+  { id: 0x80090008, rate: 1.0,  short_name: "音+", name: "音速助攻+", en_name: "SonicAssist+" },
+  { id: 0x80090009, rate: 1.0,  short_name: "短+", name: "短射程+", en_name: "ShortRange+" },
+  { id: 0x8009000A, rate: 1.0,  short_name: "长+", name: "长射程+", en_name: "LongRange+" },
+  { id: 0x8009000B, rate: 0.0,  short_name: "稀有", name: "异名", en_name: "Rare" }
+];
+
+function store_name_by_score(score) {
+  var cumulative_weight = 0;
+  for (var i = 0; i < store_weapon_table.length; i++) {
+    cumulative_weight += store_weapon_table[i].rate;
+    if (cumulative_weight >= score) {
+      var item = weapon_by_id(store_weapon_table[i].id);
+      return item ? item.name : "";
+    }
+  }
+  throw new Error("invalid score " + score);
+}
+
+function store_tag_by_score(score) {
+  var cumulative_weight = 0;
+  for (var i = 0; i < store_tag_table.length; i++) {
+    cumulative_weight += store_tag_table[i].rate;
+    if (cumulative_weight >= score) {
+      var t = store_tag_table[i];
+      return { name: t.name, short_name: t.short_name, en_name: t.en_name };
+    }
+  }
+  throw new Error("invalid score " + score);
+}
+
+function make_store_weapon() {
+  var score = rand_int_range(0, 99);
+  var name = store_name_by_score(score);
+  rand_uint32();
+  rand_uint32();
+  var tagScore = rand_float_n(100.0);
+  var tag = store_tag_by_score(tagScore);
+  return { name: name, tag: tag, score: score, tagScore:tagScore };
+}
+
+/**
+ * 匹配商店序列（参考 test_weapon.py 中的 match_store）
+ * @param {Array} seqs - [{ name, tag }, ...]，界面按武器ID排序会打乱顺序，故枚举排列
+ * @returns {string[]} 返回 "match @i name tag_short | ..." 行
+ */
+function match_store(seqs) {
+  var MAX_LIMIT = config_limit_get();
+  var results = [];
+  var permCache = {};
+  var seqPerms = [];
+
+  for (var p = 0; p < seqs.length; p++) {
+    permCache[p] = seqs[p];
+  }
+  function permute(arr, k) {
+    if (k === arr.length - 1) {
+      seqPerms.push(arr.slice());
+      return;
+    }
+    for (var i = k; i < arr.length; i++) {
+      var tmp = arr[k];
+      arr[k] = arr[i];
+      arr[i] = tmp;
+      permute(arr, k + 1);
+      arr[i] = arr[k];
+      arr[k] = tmp;
+    }
+  }
+  var indices = [];
+  for (var i = 0; i < seqs.length; i++) indices.push(i);
+  permute(indices, 0);
+
+  var uniquePerms = [];
+  var seen = {};
+  for (var pi = 0; pi < seqPerms.length; pi++) {
+    var key = seqPerms[pi].map(function (idx) { return seqs[idx].name + "," + seqs[idx].tag; }).join(";");
+    if (!seen[key]) {
+      seen[key] = true;
+      uniquePerms.push(seqPerms[pi].map(function (idx) { return seqs[idx]; }));
+    }
+  }
+
+  //console.log("uniquePerms", uniquePerms)
+
+  for (var i = 0; i < MAX_LIMIT; i++) {
+    for (var permIdx = 0; permIdx < uniquePerms.length; permIdx++) {
+      var seqPerm = uniquePerms[permIdx];
+      //console.log(i, "seqPerm", seqPerm)
+      var state = rand_backup_state();
+
+      var allMatch = true;
+      var scores = "";
+      var offset = 0;
+
+      for (var si = 0; si < seqPerm.length; si++) {
+        var seq = seqPerm[si];
+        if (!weapon_by_name(seq.name)) {
+          throw new Error("name invalid: " + seq.name);
+        }
+        if (!tag_by_name(seq.tag)) {
+          throw new Error("tag invalid: " + seq.tag);
+        }
+
+        var w = make_store_weapon();
+        var name = w.name;
+        var tag = w.tag;
+
+        //console.log(i + offset, w.name, w.tag.name, w.score, w.tagScore, seq.name, seq.tag);
+
+        if (name.toLowerCase() !== seq.name.toLowerCase()) {
+          allMatch = false;
+          break;
+        }
+        var tagName = tag.name.toLowerCase();
+        var tagShort = tag.short_name.toLowerCase();
+        var tagEn = tag.en_name.toLowerCase();
+        var seqTagLower = seq.tag.toLowerCase();
+        
+
+        if (tagName !== seqTagLower && tagShort !== seqTagLower && tagEn !== seqTagLower) {
+          allMatch = false;
+          break;
+        }
+
+        if (scores) {
+          scores += "," + name + "-" + tag.short_name;
+        } else {
+          scores +=  "#" + (i + offset) + " " + name + "-" + tag.short_name;
+        }
+        offset += 4;
+      }
+
+
+      rand_restore_state(state);
+      if (allMatch) {
+        //console.log(scores)
+        results.push(scores);
+        break;
+      }
+    }
+    rand_uint32();
+  }
+
+  return results;
+}
+
+/**
+ * 匹配商店序列（参考 test_weapon.py 中的 test_match_store）
+ * @param {string} seqStr - 逗号分隔 "武器-标签"，如 "M40A1-短,MP5-填弹"
+ * @returns {string[]} 返回 match_store 的输出行
+ */
+function test_match_store(seqStr) {
+  rand_init_seed();
+  seqStr = seqStr.trim().replace(/\r\n?/g, "\n").replace(/，/g, ",");
+  var weapon_list = seqStr.split(/[,\n]+/).map(function (s) { return s.trim(); }).filter(function (s) { return s.length; });
+  var seqs = [];
+  for (var i = 0; i < weapon_list.length; i++) {
+    var part = weapon_list[i].trim();
+    if (part == "") {
+      continue;
+    }
+    var parsed = part.split("-");
+    if (parsed.length === 2) {
+      var name = parsed[0].trim();
+      var tag = parsed[1].trim();
+      seqs.push({ name: name, tag: tag });
+    } else {
+      throw new Error("weapon invalid: " + part);
+    }
+  }
+  return match_store(seqs);
 }
 
 /**
