@@ -4,7 +4,7 @@
 | M92F          | 10.0                    |
 | Government    | 7.0                     |
 | G18           | 1.0                     |
-| PC365         | 6.0                     |
+| PC356         | 6.0                     |
 | Python        | 4.0                     |
 | L.Hawk        | 3.0                     |
 | PaleRider     | 1.0                     |
