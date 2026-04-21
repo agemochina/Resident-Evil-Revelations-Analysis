@@ -30,7 +30,7 @@ Probability Table (open 1 weapon case) (follow probabilities are for large-scale
 | 333 222 11     | 15.54%        | 48%            | 1.5%       | 0.11%                |
 | 333 222 1      | 14.67%        | 46%            | 1.5%       | 0.10%                |
 | 333            | 8.50%         | 32%            | 1.5%       | 0.04%                |
-| 不装备         | 1.49%         | 14%            | 1.5%       | 0.003%               |
+| No Equip       | 1.49%         | 14%            | 1.5%       | 0.003%               |
 
 # Drop Determination Steps
 
