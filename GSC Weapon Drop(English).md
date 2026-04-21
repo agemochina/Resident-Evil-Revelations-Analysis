@@ -57,7 +57,7 @@ The weapon table is located in the ROM file: `archive\game\coop_table\weaponRate
 | M92F        | 0x80051000 | 8.0   |
 | Government  | 0x80051010 | 7.5   |
 | G18         | 0x80051040 | 2.0   |
-| PC365       | 0x80051060 | 7.0   |
+| PC356       | 0x80051060 | 7.0   |
 | Python      | 0x80051100 | 5.0   |
 | L.Hawk      | 0x80051110 | 3.0   |
 | Pale Rider  | 0x80051120 | 1.5   |
