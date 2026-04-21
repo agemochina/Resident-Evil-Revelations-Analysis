@@ -14,8 +14,8 @@ Resident Evil Revelations 生化危机:启示录 数据分析
 
 # Table of Content(English)
 - [GSC (Ghost Ship Chaos) Weapon Drop Analysis(English)](<./GSC Weapon Drop(English).md>) 
-- [[Switch Platform]
-  - Resident Evil Revelations 1: Serpent Is Not a Dream -- "RNG Manipulation" to Get Any Desired Rare Weapon](<./GSC Weapon Control(English).md>)
+- Switch Platform
+  - [Resident Evil Revelations 1: Serpent Is Not a Dream -- "RNG Manipulation" to Get Any Desired Rare Weapon](<./GSC Weapon Control(English).md>)
   - [website -- Rare Weapon Predictor(Switch Only)](<https://agemo.srht.site/amiibo.html>)
 - Switch/Xbox/PS
   - [video](<https://b23.tv/UmuUyEC>)
