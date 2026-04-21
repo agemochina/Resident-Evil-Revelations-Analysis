@@ -8,13 +8,16 @@ Resident Evil Revelations 生化危机:启示录 数据分析
   - 上述视频对应的网站工具 [稀有武器预测器(Switch)](<https://agemo.srht.site/amiibo.html>)
 - 【Switch/Xbox/PS】
   - 生化危机启示录1：操控随机数”刷出任意蓝底满孔异名（v2.0 通用平台方案） [B站视频](<https://b23.tv/UmuUyEC>)
-  - 网站工具 [稀有武器预测器(Switch/Xbox/PS)](<https://agemo.srht.site/weapon.html>)
+  - 上述视频对应的网站工具 [稀有武器预测器(Switch/Xbox/PS)](<https://agemo.srht.site/weapon.html>)
 - [LVT 解析游戏表格数据文件](<./LVT Parser>)
 
 
 # Table of Content(English)
 - [GSC (Ghost Ship Chaos) Weapon Drop Analysis(English)](<./GSC Weapon Drop(English).md>) 
-- [[Switch Platform] Resident Evil Revelations 1: Serpent Is Not a Dream -- "RNG Manipulation" to Get Any Desired Rare Weapon](<./GSC Weapon Control(English).md>)
-- [website -- Rare Weapon Predictor(Switch Only)](<https://agemo.srht.site/amiibo.html>)
-- [website -- Rare Weapon Predictor(Switch/Xbox/PS)](<https://agemo.srht.site/weapon.html>)
+- [[Switch Platform]
+  - Resident Evil Revelations 1: Serpent Is Not a Dream -- "RNG Manipulation" to Get Any Desired Rare Weapon](<./GSC Weapon Control(English).md>)
+  - [website -- Rare Weapon Predictor(Switch Only)](<https://agemo.srht.site/amiibo.html>)
+- Switch/Xbox/PS
+  - [video](<https://b23.tv/UmuUyEC>)
+  - [website -- Rare Weapon Predictor(Switch/Xbox/PS)](<https://agemo.srht.site/weapon.html>)
 - [LVT Game data Parser](<./LVT Parser>) 
